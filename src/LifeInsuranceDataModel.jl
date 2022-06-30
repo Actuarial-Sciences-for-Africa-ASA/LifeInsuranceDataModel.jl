@@ -237,7 +237,7 @@ function tsection(tariff_id::Integer, tsdb_validfrom, tsworld_validfrom)::Tariff
     )
 end
 
-function (history_id::Int)
+function history_forest(history_id::Int)
     connect()
     BitemporalPostgres.Node(ValidityInterval(), mkforest(DbId(history_id),
         MaxDate,

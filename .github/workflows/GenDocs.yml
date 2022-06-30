@@ -26,7 +26,7 @@ jobs:
           git config --global user.email email
           git config --global github.user username
       - working-directory: docs
-      run: julia --project=$(pwd) -e' push!(LOAD_PATH,"../src"); using Pkg;Pkg.instantiate(); include("make.jl")'
+        run: julia --project=$(pwd) -e' push!(LOAD_PATH,"../src"); using Pkg;Pkg.instantiate(); include("make.jl")'
         env:
           JULIA_PKG_SERVER: ""
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

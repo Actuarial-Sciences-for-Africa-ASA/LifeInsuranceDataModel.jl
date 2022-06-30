@@ -3,7 +3,7 @@ on:
   push:
     # Sequence of patterns matched against refs/heads
     branches:
-      - master
+      - main
       - "releases/**"
 jobs:
   runner-job:

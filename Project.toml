@@ -19,6 +19,7 @@ ToStruct = "43ec2cc1-0e50-5406-a854-b7ff8fdb8dad"
 [compat]
 BitemporalPostgres = "1.0.4"
 DataFrames = "1"
+Documenter = "0.27.19"
 Intervals = "1.6.0"
 JSON = "0.21.3"
 Revise = "3"

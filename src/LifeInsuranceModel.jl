@@ -19,7 +19,6 @@ export Contract,
     ContractPartnerRef,
     ContractPartnerRefRevision,
     csection,
-    csection_dict,
     history_forest,
     psection,
     ProductItem,
@@ -210,10 +209,6 @@ function csection(contract_id::Integer, tsdb_validfrom, tsworld_validfrom)::Cont
     )
 end
 
-#     function csection_dict(history_id::Integer, version_id::Integer)::Dict{String,Any}
-# JSON.parse(JSON.json(csection(history_id, version_id)), dicttype=Dict{String,Any})
-#     end
-# 
 function psection(partner_id::Integer, tsdb_validfrom, tsworld_validfrom)::PartnerSection
     connect()
     history_id = find(Partner, SQLWhereExpression("id=?", DbId(partner_id)))[1].ref_history
@@ -242,7 +237,7 @@ function tsection(tariff_id::Integer, tsdb_validfrom, tsworld_validfrom)::Tariff
     )
 end
 
-function history_forest(history_id::Int)
+function (history_id::Int)
     connect()
     BitemporalPostgres.Node(ValidityInterval(), mkforest(DbId(history_id),
         MaxDate,

@@ -1,8 +1,8 @@
 push!(LOAD_PATH, "../src/")
 using Documenter
-import BitemporalReactive
+import LifeInsuranceModel
 makedocs(
-    sitename="BitemporalReactive",
+    sitename="LifeInsuranceModel",
     format=Documenter.HTML(),
     pages=[
         "Home" => "index.md"
@@ -13,5 +13,5 @@ makedocs(
 # See "Hosting Documentation" and deploydocs() in the Documenter manual
 # for more information.
 deploydocs(
-    repo="github.com/michaelfliegner/BitemporalReactive.jl"
+    repo="github.com/michaelfliegner/LifeInsuranceModel.jl"
 )

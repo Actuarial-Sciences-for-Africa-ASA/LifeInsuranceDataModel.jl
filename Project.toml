@@ -3,6 +3,7 @@ uuid = "4892898e-25d7-46ce-b5c3-dea2164303ac"
 authors = ["Michael Fliegner <michael.fliegner@hamburg.de>"]
 version = "0.1.0"
 
+[deps]
 BitemporalPostgres = "e513cd14-23e6-48df-acf1-d9bc8fa5674b"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"

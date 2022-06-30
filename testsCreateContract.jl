@@ -9,7 +9,6 @@ using SearchLightPostgreSQL
 using TimeZones
 using ToStruct
 using JSON
-using HTTP
 
 if (haskey(ENV, "GENIE_ENV") && ENV["GENIE_ENV"] == "dev")
     run(```sudo -u postgres psql -f sqlsnippets/droptables.sql```)

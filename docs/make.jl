@@ -1,8 +1,8 @@
 push!(LOAD_PATH, "../src/")
 using Documenter
-import LifeInsuranceModel
+import LifeInsuranceDataModel
 makedocs(
-    sitename="LifeInsuranceModel",
+    sitename="LifeInsuranceDataModel",
     format=Documenter.HTML(),
     pages=[
         "Home" => "index.md"
@@ -13,5 +13,5 @@ makedocs(
 # See "Hosting Documentation" and deploydocs() in the Documenter manual
 # for more information.
 deploydocs(
-    repo="github.com/michaelfliegner/LifeInsuranceModel.jl"
+    repo="github.com/michaelfliegner/LifeInsuranceDataModel.jl"
 )

@@ -1,7 +1,7 @@
 
 import Base: @kwdef
 using Test
-using LifeInsuranceModel
+using LifeInsuranceDataModel
 
 using BitemporalPostgres
 using SearchLight
@@ -32,21 +32,21 @@ end
     end
 
     cpRole = Dict{String,Int64}()
-    map(find(LifeInsuranceModel.ContractPartnerRole)) do entry
+    map(find(LifeInsuranceDataModel.ContractPartnerRole)) do entry
         cpRole[entry.value] = entry.id.value
     end
     piprRole = Dict{String,Int64}()
-    map(find(LifeInsuranceModel.TariffItemPartnerRole)) do entry
+    map(find(LifeInsuranceDataModel.TariffItemPartnerRole)) do entry
         piprRole[entry.value] = entry.id.value
     end
     pitrRole = Dict{String,Int64}()
-    map(find(LifeInsuranceModel.TariffItemRole)) do entry
+    map(find(LifeInsuranceDataModel.TariffItemRole)) do entry
         pitrRole[entry.value] = entry.id.value
     end
 
     # create Partner
-    p = LifeInsuranceModel.Partner()
-    pr = LifeInsuranceModel.PartnerRevision(description="Partner 1")
+    p = LifeInsuranceDataModel.Partner()
+    pr = LifeInsuranceDataModel.PartnerRevision(description="Partner 1")
     w = Workflow(
         tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"Africa/Porto-Novo"),
     )
@@ -55,8 +55,8 @@ end
     commit_workflow!(w)
 
     # create Tariffs
-    t = LifeInsuranceModel.Tariff()
-    tr = LifeInsuranceModel.TariffRevision(description="Life Risk Insurance")
+    t = LifeInsuranceDataModel.Tariff()
+    tr = LifeInsuranceDataModel.TariffRevision(description="Life Risk Insurance")
     w0 = Workflow(
         tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"Africa/Porto-Novo"),
     )

@@ -1,4 +1,4 @@
-name = "LifeInsuranceModel"
+name = "LifeInsuranceDataModel"
 uuid = "4892898e-25d7-46ce-b5c3-dea2164303ac"
 authors = ["Michael Fliegner <michael.fliegner@hamburg.de>"]
 version = "0.1.0"

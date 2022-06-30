@@ -1,4 +1,4 @@
-module LifeInsuranceModel
+module LifeInsuranceDataModel
 
 import Base: @kwdef
 import TimeZones

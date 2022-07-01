@@ -6,6 +6,12 @@ makedocs(
     format=Documenter.HTML(),
     pages=[
         "Home" => "index.md"
+        "LifeInsuranceDataModel API" => [
+            "LifeInsuranceDataModel" => "api/LifeInsuranceDataModel.md",
+            "Contract" => "api/InsuranceContracts.md",
+            "Partner" => "api/InsurancePartners.md",
+            "Tariff" => "api/InsuranceTariffs.md"
+        ]
     ]
 )
 

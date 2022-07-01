@@ -42,7 +42,12 @@ export Tariff, TariffRevision
 export ContractSection, ProductItemSection, PartnerSection, TariffSection, csection, pisection, tsection, psection
 export insurancecontracts_view
 
+"""
+PartnerSection
 
+    is a section (see above) of a Partner entity
+
+"""
 @kwdef mutable struct PartnerSection
     tsdb_validfrom::TimeZones.ZonedDateTime = now(tz"UTC")
     tsw_validfrom::TimeZones.ZonedDateTime = now(tz"UTC")
@@ -51,7 +56,11 @@ export insurancecontracts_view
     revision::PartnerRevision = PartnerRevision()
 end
 
+"""
+TariffSection 
 
+is a section (see above) of a Tariff entity
+"""
 @kwdef mutable struct TariffSection
     tsdb_validfrom::TimeZones.ZonedDateTime = now(tz"UTC")
     tsw_validfrom::TimeZones.ZonedDateTime = now(tz"UTC")
@@ -60,21 +69,35 @@ end
     revision::TariffRevision = TariffRevision()
 end
 
+"""
+TariffItemPartnerReference is a reference from a TariffItem to a Partner entity
+For instance, typically an insured person
+"""
 @kwdef mutable struct TariffItemPartnerReference
     rev::TariffItemPartnerRefRevision = TariffItemPartnerRefRevision()
     ref::PartnerSection = PartnerSection()
 end
 
+
+"""
+TariffItemTariffReference is a reference from a TariffItem to a Tariff entity
+"""
 @kwdef mutable struct TariffItemTariffReference
     rev::TariffItemRevision = TariffItemRevision()
     ref::TariffSection = TariffSection()
 end
 
+"""
+TariffItemSection is a section (see above) of a TariffItem component
+"""
 @kwdef mutable struct TariffItemSection
     tariff_ref::TariffItemTariffReference = TariffItemTariffReference()
     partner_refs::Vector{TariffItemPartnerReference} = [TariffItemPartnerReference()]
 end
 
+"""
+ProductItemSection is a section (see above) of a ProductItem component
+"""
 @kwdef mutable struct ProductItemSection
     revision::ProductItemRevision = ProductItemRevision(position=0)
     tariff_items::Vector{TariffItemSection} = [TariffItemSection]

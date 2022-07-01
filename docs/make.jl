@@ -1,6 +1,6 @@
 push!(LOAD_PATH, "../src/")
 using Documenter
-import LifeInsuranceDataModel
+import LifeInsuranceDataModel, LifeInsuranceDataModel.InsuranceContracts, LifeInsuranceDataModel.InsurancePartners, LifeInsuranceDataModel.InsuranceTariffs
 makedocs(
     sitename="LifeInsuranceDataModel",
     format=Documenter.HTML(),

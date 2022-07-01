@@ -1,4 +1,4 @@
-# LifeInsuranceDaInsurancePartnerstaModel.jl
+# InsurancePartners.jl
 
 ```@autodocs
 Modules = [InsurancePartners]

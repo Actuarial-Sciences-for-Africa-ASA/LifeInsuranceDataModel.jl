@@ -54,6 +54,109 @@ function up()
         :contractRevisions,
     )
 
+    create_table(:tariffs) do
+        [
+            column(:id, :bigserial, "PRIMARY KEY")
+            column(:ref_history, :bigint, "REFERENCES histories(id) ON DELETE CASCADE")
+            column(:ref_version, :bigint, "REFERENCES versions(id) ON DELETE CASCADE")
+        ]
+    end
+
+    create_table(:tariffRevisions) do
+        [
+            column(:id, :bigserial, "PRIMARY KEY")
+            column(:ref_component, :bigint, "REFERENCES tariffs(id) ON DELETE CASCADE")
+            column(:ref_validfrom, :bigint, "REFERENCES versions(id) ON DELETE CASCADE")
+            column(:ref_invalidfrom, :bigint, "REFERENCES versions(id) ON DELETE CASCADE")
+            column(:ref_valid, :int8range)
+            column(:description, :string)
+        ]
+    end
+
+    createRevisionsTriggerAndConstraint(
+        :tr_versions_trig,
+        :tr_versionrange,
+        :tariffRevisions,
+    )
+
+    create_table(:products) do
+        [
+            column(:id, :bigserial, "PRIMARY KEY")
+            column(:ref_history, :bigint, "REFERENCES histories(id) ON DELETE CASCADE")
+            column(:ref_version, :bigint, "REFERENCES versions(id) ON DELETE CASCADE")
+        ]
+    end
+
+    create_table(:productRevisions) do
+        [
+            column(:id, :bigserial, "PRIMARY KEY")
+            column(
+                :ref_component,
+                :bigint,
+                "REFERENCES products(id) ON DELETE CASCADE",
+            )
+            column(:ref_validfrom, :bigint, "REFERENCES versions(id) ON DELETE CASCADE")
+            column(:ref_invalidfrom, :bigint, "REFERENCES versions(id) ON DELETE CASCADE")
+            column(:ref_valid, :int8range)
+            column(:description, :string)
+        ]
+    end
+
+    createRevisionsTriggerAndConstraint(
+        :p_versions_trig,
+        :p_versionrange,
+        :productRevisions,
+    )
+
+    create_table(:TarifFItemRoles) do
+        [
+            column(:id, :bigserial, "PRIMARY KEY")
+            column(:domain, :string)
+            column(:value, :string)
+        ]
+    end
+
+    create_table(:ProductPartRoles) do
+        [
+            column(:id, :bigserial, "PRIMARY KEY")
+            column(:domain, :string)
+            column(:value, :string)
+        ]
+    end
+
+    create_table(:productParts) do
+        [
+            column(:id, :bigserial, "PRIMARY KEY")
+            column(:ref_history, :bigint, "REFERENCES histories(id) ON DELETE CASCADE")
+            column(:ref_version, :bigint, "REFERENCES versions(id) ON DELETE CASCADE")
+            column(:ref_super, :bigint, "REFERENCES products(id) ON DELETE CASCADE")
+        ]
+    end
+
+    create_table(:productPartRevisions) do
+        [
+            column(:id, :bigserial, "PRIMARY KEY")
+            column(
+                :ref_component,
+                :bigint,
+                "REFERENCES productParts(id) ON DELETE CASCADE",
+            )
+            column(:position, :bigint)
+            column(:ref_role, :bigint, "REFERENCES productpartroles(id) ON DELETE CASCADE")
+            column(:ref_tariff, :bigint, "REFERENCES tariffs(id) ON DELETE CASCADE")
+            column(:ref_validfrom, :bigint, "REFERENCES versions(id) ON DELETE CASCADE")
+            column(:ref_invalidfrom, :bigint, "REFERENCES versions(id) ON DELETE CASCADE")
+            column(:ref_valid, :int8range)
+            column(:description, :string)
+        ]
+    end
+
+    createRevisionsTriggerAndConstraint(
+        :pp_versions_trig,
+        :pp_versionrange,
+        :productPartRevisions,
+    )
+
     create_table(:productItems) do
         [
             column(:id, :bigserial, "PRIMARY KEY")
@@ -71,6 +174,7 @@ function up()
                 :bigint,
                 "REFERENCES productitems(id) ON DELETE CASCADE",
             )
+            column(:ref_product, :bigint, "REFERENCES products(id) ON DELETE CASCADE")
             column(:position, :bigint)
             column(:ref_validfrom, :bigint, "REFERENCES versions(id) ON DELETE CASCADE")
             column(:ref_invalidfrom, :bigint, "REFERENCES versions(id) ON DELETE CASCADE")
@@ -150,39 +254,6 @@ function up()
         :cprr_versionrange,
         :contractPartnerRefRevisions,
     )
-
-    create_table(:tariffs) do
-        [
-            column(:id, :bigserial, "PRIMARY KEY")
-            column(:ref_history, :bigint, "REFERENCES histories(id) ON DELETE CASCADE")
-            column(:ref_version, :bigint, "REFERENCES versions(id) ON DELETE CASCADE")
-        ]
-    end
-
-    create_table(:tariffRevisions) do
-        [
-            column(:id, :bigserial, "PRIMARY KEY")
-            column(:ref_component, :bigint, "REFERENCES tariffs(id) ON DELETE CASCADE")
-            column(:ref_validfrom, :bigint, "REFERENCES versions(id) ON DELETE CASCADE")
-            column(:ref_invalidfrom, :bigint, "REFERENCES versions(id) ON DELETE CASCADE")
-            column(:ref_valid, :int8range)
-            column(:description, :string)
-        ]
-    end
-
-    createRevisionsTriggerAndConstraint(
-        :tr_versions_trig,
-        :tr_versionrange,
-        :tariffRevisions,
-    )
-
-    create_table(:TariffItemRoles) do
-        [
-            column(:id, :bigserial, "PRIMARY KEY")
-            column(:domain, :string)
-            column(:value, :string)
-        ]
-    end
 
     create_table(:TariffItems) do
         [

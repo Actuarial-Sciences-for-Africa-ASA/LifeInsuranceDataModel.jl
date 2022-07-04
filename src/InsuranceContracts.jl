@@ -2,6 +2,8 @@ module InsuranceContracts
 import BitemporalPostgres
 import SearchLight: DbId, AbstractModel
 import Base: @kwdef
+import Roles.Role
+
 export Contract, ContractRevision, ContractPartnerRole, ContractPartnerRef, ContractPartnerRefRevision, ProductItem, TariffItemRole, ProductItemRevision, TariffItem, TariffItemRevision, TariffItemPartnerRole, TariffItemPartnerRef, TariffItemPartnerRefRevision
 using BitemporalPostgres
 
@@ -58,25 +60,6 @@ ProductItemRevision
   ref_invalidfrom::DbId = InfinityKey
   description::String = ""
 end
-
-"""
-Role
-
-  role of a relationship 
-
-"""
-abstract type Role <: AbstractModel end
-
-function get_id(role::Role)::DbId
-  role.id
-end
-function get_domain(role::Role)::DbId
-  role.domain
-end
-function get_value(role::Role)::DbId
-  role.value
-end
-
 
 """
 ContractPartnerRole

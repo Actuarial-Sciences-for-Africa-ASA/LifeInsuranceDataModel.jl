@@ -31,6 +31,11 @@ end
         save!(TariffItemRole(value=val))
     end
 
+    productpartroles = map(["Main Coverage - Life" "Supplementary Coverage - Occupational Disablity" "Supplementary Coverage - Terminal Illness" "Profit participation"]) do val
+        save!(ProductPartRole(value=val))
+    end
+
+
     cpRole = Dict{String,Int64}()
     map(find(LifeInsuranceDataModel.ContractPartnerRole)) do entry
         cpRole[entry.value] = entry.id.value
@@ -43,6 +48,12 @@ end
     map(find(LifeInsuranceDataModel.TariffItemRole)) do entry
         pitrRole[entry.value] = entry.id.value
     end
+
+    ppRole = Dict{String,Int64}()
+    map(find(LifeInsuranceDataModel.ProductPartRole)) do entry
+        ppRole[entry.value] = entry.id.value
+    end
+
 
     # create Partner
     p = LifeInsuranceDataModel.Partner()
@@ -92,6 +103,75 @@ end
     create_component!(t4, tr4, w0)
     commit_workflow!(w0)
 
+    p = Product()
+    pr = ProductRevision(description="Life Risk")
+
+    # tariffitemtariffroles = map(["Main Coverage - Life" "Supplementary Coverage - Occupational Disablity" "Supplementary Coverage - Terminal Illness" "Profit participation"]) do val
+
+    pp = ProductPart()
+    ppr = ProductPartRevision(ref_tariff=t.id, ref_role=ppRole["Main Coverage - Life"], description="Main Coverage - Life")
+
+    pp2 = ProductPart()
+    ppr2 = ProductPartRevision(ref_tariff=t4.id, ref_role=ppRole["Profit participation"], description="Profit participation Lif Risk")
+
+    w0 = Workflow(
+        tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"Africa/Porto-Novo"),
+    )
+    create_entity!(w0)
+    create_component!(p, pr, w0)
+    create_subcomponent!(p, pp, ppr, w0)
+    create_subcomponent!(p, pp2, ppr2, w0)
+    commit_workflow!(w0)
+
+    p1 = Product()
+    pr1 = ProductRevision(description="Life Risk Terminal")
+
+    # tariffitemtariffroles = map(["Main Coverage - Life" "Supplementary Coverage - Occupational Disablity" "Supplementary Coverage - Terminal Illness" "Profit participation"]) do val
+
+    pp1 = ProductPart()
+    ppr1 = ProductPartRevision(ref_tariff=t.id, ref_role=ppRole["Main Coverage - Life"], description="Main Coverage - Life")
+
+    pp12 = ProductPart()
+    ppr12 = ProductPartRevision(ref_tariff=t4.id, ref_role=ppRole["Profit participation"], description="Profit participation Life Risk")
+
+    pp13 = ProductPart()
+    ppr13 = ProductPartRevision(ref_tariff=t4.id, ref_role=ppRole["Supplementary Coverage - Terminal Illness"], description="Terminal Illness")
+
+    w0 = Workflow(
+        tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"Africa/Porto-Novo"),
+    )
+    create_entity!(w0)
+    create_component!(p1, pr1, w0)
+    create_subcomponent!(p1, pp1, ppr1, w0)
+    create_subcomponent!(p1, pp12, ppr12, w0)
+    create_subcomponent!(p1, pp13, ppr13, w0)
+    commit_workflow!(w0)
+
+    p2 = Product()
+    pr2 = ProductRevision(description="Life Risk Occupatational")
+
+    pp2 = ProductPart()
+    ppr2 = ProductPartRevision(ref_tariff=t.id, ref_role=ppRole["Main Coverage - Life"], description="Main Coverage - Life")
+
+    pp21 = ProductPart()
+    ppr21 = ProductPartRevision(ref_tariff=t4.id, ref_role=ppRole["Profit participation"], description="Profit participation Life Risk")
+
+    pp22 = ProductPart()
+    ppr22 = ProductPartRevision(ref_tariff=t4.id, ref_role=ppRole["Supplementary Coverage - Occupational Disablity"], description="Occupational Disability")
+
+    pp23 = ProductPart()
+    ppr23 = ProductPartRevision(ref_tariff=t4.id, ref_role=ppRole["Profit participation"], description="Profit participation Occ.Disablity")
+
+    w0 = Workflow(
+        tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"Africa/Porto-Novo"),
+    )
+    create_entity!(w0)
+    create_component!(p2, pr2, w0)
+    create_subcomponent!(p2, pp2, ppr2, w0)
+    create_subcomponent!(p2, pp21, ppr21, w0)
+    create_subcomponent!(p2, pp22, ppr22, w0)
+    create_subcomponent!(p2, pp23, ppr23, w0)
+    commit_workflow!(w0)
 
 
     # create Contract

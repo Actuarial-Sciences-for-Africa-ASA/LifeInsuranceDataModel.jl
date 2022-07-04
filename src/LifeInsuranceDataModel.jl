@@ -36,11 +36,31 @@ include("InsurancePartners.jl")
 using .InsurancePartners
 
 export Partner, PartnerRevision
-include("InsuranceTariffs.jl")
-using .InsuranceTariffs
-export Tariff, TariffRevision
+include("InsuranceProducts.jl")
+using .InsuranceProducts
+export Product, ProductRevision, ProductPart, ProductPartRevision, ProductPartRole, Tariff, TariffRevision
 export ContractSection, ProductItemSection, PartnerSection, TariffSection, csection, pisection, tsection, psection
 export insurancecontracts_view
+
+"""
+Roleusin
+
+
+  role of a relationship 
+
+"""
+abstract type Role <: AbstractModel end
+
+function get_id(role::Role)::DbId
+    role.id
+end
+function get_domain(role::Role)::DbId
+    role.domain
+end
+function get_value(role::Role)::DbId
+    role.value
+end
+
 
 """
 PartnerSection

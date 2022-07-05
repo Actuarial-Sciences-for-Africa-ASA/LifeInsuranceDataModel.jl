@@ -1,6 +1,6 @@
 push!(LOAD_PATH, "../src/")
 using Documenter
-import LifeInsuranceDataModel, LifeInsuranceDataModel.InsuranceContracts, LifeInsuranceDataModel.InsurancePartners, LifeInsuranceDataModel.InsuranceTariffs
+import LifeInsuranceDataModel, LifeInsuranceDataModel.InsuranceContracts, LifeInsuranceDataModel.InsurancePartners, LifeInsuranceDataModel.InsuranceProducts, LifeInsuranceDataModel.InsuranceTariffs
 makedocs(
     sitename="LifeInsuranceDataModel",
     format=Documenter.HTML(),
@@ -10,6 +10,7 @@ makedocs(
             "LifeInsuranceDataModel" => "api/LifeInsuranceDataModel.md",
             "Contract" => "api/InsuranceContracts.md",
             "Partner" => "api/InsurancePartners.md",
+            "Product" => "api/InsuranceProducts.md",
             "Tariff" => "api/InsuranceTariffs.md"
         ]
     ]

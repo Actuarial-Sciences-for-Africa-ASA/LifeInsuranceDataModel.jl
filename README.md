@@ -12,7 +12,7 @@ Features are:
 - populating the database 
 - displaying contract versions and history
 
-![UML Model](docs/src/BitemporalModel.uxf.png)
+![UML Model](docs/src/assets/BitemporalModel.uxf.png)
  
 
   

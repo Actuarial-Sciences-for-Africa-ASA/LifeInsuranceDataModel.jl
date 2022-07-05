@@ -1,6 +1,6 @@
 [![CI](https://github.com/michaelfliegner/LifeInsuranceDataModel.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/michaelfliegner/LifeInsuranceDataModel.jl/actions/workflows/CI.yml)
 
-[![Documentation](https://github.com/michaelfliegner/LifeInsuranceDataModel.jl/actions/workflows/Documentation.yml/badge.svg)](https://github.com/michaelfliegner/LifeInsuranceDataModel.jl/actions/workflows/Documentation.yml)
+[![Documentation](https://github.com/michaelfliegner/LifeInsuranceDataModel.jl/actions/workflows/GenDocs.yml/badge.svg)](https://github.com/michaelfliegner/LifeInsuranceDataModel.jl/actions/workflows/GenDocs.yml)
 
 This is a prototype model for bitemporal data management based on [a Julia bitemporal data management API](https://github.com/michaelfliegner/BitemporalPostgres.jl)
 

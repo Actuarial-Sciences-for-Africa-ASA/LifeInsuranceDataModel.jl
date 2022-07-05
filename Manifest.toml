@@ -1,10 +1,5 @@
 # This file is machine-generated - editing it directly is not advised
 
-[[ANSIColoredPrinters]]
-git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
-uuid = "a4c015fc-c6ff-483c-b24f-f7ea428134e9"
-version = "0.0.1"
-
 [[AbstractTrees]]
 git-tree-sha1 = "03e0550477d86222521d254b741d470ba17ea0b5"
 uuid = "1520ce14-60c1-5f80-bbc7-55ef81b5835c"
@@ -27,9 +22,11 @@ uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
 [[BitemporalPostgres]]
 deps = ["AbstractTrees", "Dates", "Intervals", "SearchLight", "SearchLightPostgreSQL", "Test", "TimeZones", "ToStruct"]
-git-tree-sha1 = "a09bc473c76f7e96bea4b69e00062233fad93496"
+git-tree-sha1 = "5fbae145a5ad66b987a00a6b35fb750b2e3df87f"
+repo-rev = "main"
+repo-url = "https://github.com/michaelfliegner/BitemporalPostgres.jl"
 uuid = "e513cd14-23e6-48df-acf1-d9bc8fa5674b"
-version = "1.0.4"
+version = "1.0.6"
 
 [[CEnum]]
 git-tree-sha1 = "eb4cb44a499229b3b8426dcfb5dd85333951ff90"
@@ -119,12 +116,6 @@ version = "0.4.2"
 [[Future]]
 deps = ["Random"]
 uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
-
-[[IOCapture]]
-deps = ["Logging", "Random"]
-git-tree-sha1 = "f7be53659ab06ddc986428d3a9dcc95f6fa6705a"
-uuid = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
-version = "0.2.2"
 
 [[Infinity]]
 deps = ["Dates", "Random", "Requires"]

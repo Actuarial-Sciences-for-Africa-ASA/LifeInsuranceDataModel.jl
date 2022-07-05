@@ -38,12 +38,15 @@ using .InsurancePartners
 export Partner, PartnerRevision
 include("InsuranceProducts.jl")
 using .InsuranceProducts
+include("InsuranceTariffs.jl")
+using .InsuranceTariffs
+
 export Product, ProductRevision, ProductPart, ProductPartRevision, ProductPartRole, Tariff, TariffRevision
 export ContractSection, ProductItemSection, PartnerSection, TariffSection, csection, pisection, tsection, psection
 export insurancecontracts_view
 
 """
-Roleusin
+Role 
 
 
   role of a relationship 

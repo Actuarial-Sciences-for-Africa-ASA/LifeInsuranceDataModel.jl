@@ -3,10 +3,7 @@ import BitemporalPostgres
 import SearchLight: DbId
 import Base: @kwdef
 using BitemporalPostgres
-import Roles.Role
-include("InsuranceTariffs.jl")
-using .InsuranceTariffs
-export Product, ProductRevision, ProductPart, ProductPartRevision, ProductPartRole, Tariff, TariffRevision
+export Product, ProductRevision, ProductPart, ProductPartRevision, ProductPartRole
 
 """
 Product

@@ -2,7 +2,6 @@ module InsuranceContracts
 import BitemporalPostgres
 import SearchLight: DbId, AbstractModel
 import Base: @kwdef
-import Roles.Role
 
 export Contract, ContractRevision, ContractPartnerRole, ContractPartnerRef, ContractPartnerRefRevision, ProductItem, TariffItemRole, ProductItemRevision, TariffItem, TariffItemRevision, TariffItemPartnerRole, TariffItemPartnerRef, TariffItemPartnerRefRevision
 using BitemporalPostgres

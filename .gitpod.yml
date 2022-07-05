@@ -5,4 +5,4 @@ tasks:
       echo 'PATH_add /home/gitpod/julia-1.6.5/bin' > .envrc
   - command: python3 -m http.server 8080 -d docs/build
   - command: gp preview $(gp url 8080)
-  - command: runjulia -e 'include("init.jl")'
+  - command: mv db/connectionGTP.yml db/connection.yml

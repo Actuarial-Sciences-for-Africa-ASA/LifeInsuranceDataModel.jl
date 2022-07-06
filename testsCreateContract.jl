@@ -25,21 +25,6 @@ end
     SearchLight.Migrations.create_migrations_table()
     SearchLight.Migrations.up()
 
-    contractpartnerroles = map(["Policy Holder" "Premium Payer"]) do val
-        save!(ContractPartnerRole(value=val))
-    end
-    tariffitempartnerroles = map(["Insured Person" "2nd Insured Person"]) do val
-        save!(TariffItemPartnerRole(value=val))
-    end
-    tariffitemtariffroles = map(["Main Coverage - Life" "Supplementary Coverage - Occupational Disablity" "Supplementary Coverage - Terminal Illness" "Profit participation"]) do val
-        save!(TariffItemRole(value=val))
-    end
-
-    productpartroles = map(["Main Coverage - Life" "Supplementary Coverage - Occupational Disablity" "Supplementary Coverage - Terminal Illness" "Profit participation"]) do val
-        save!(ProductPartRole(value=val))
-    end
-
-
     cpRole = Dict{String,Int64}()
     map(find(LifeInsuranceDataModel.ContractPartnerRole)) do entry
         cpRole[entry.value] = entry.id.value
@@ -110,8 +95,6 @@ end
     p = Product()
     pr = ProductRevision(description="Life Risk")
 
-    # tariffitemtariffroles = map(["Main Coverage - Life" "Supplementary Coverage - Occupational Disablity" "Supplementary Coverage - Terminal Illness" "Profit participation"]) do val
-
     pp = ProductPart()
     ppr = ProductPartRevision(ref_tariff=t.id, ref_role=ppRole["Main Coverage - Life"], description="Main Coverage - Life")
 
@@ -129,8 +112,6 @@ end
 
     p1 = Product()
     pr1 = ProductRevision(description="Life Risk Terminal")
-
-    # tariffitemtariffroles = map(["Main Coverage - Life" "Supplementary Coverage - Occupational Disablity" "Supplementary Coverage - Terminal Illness" "Profit participation"]) do val
 
     pp1 = ProductPart()
     ppr1 = ProductPartRevision(ref_tariff=t.id, ref_role=ppRole["Main Coverage - Life"], description="Main Coverage - Life")

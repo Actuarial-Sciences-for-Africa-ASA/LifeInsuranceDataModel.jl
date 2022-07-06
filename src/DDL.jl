@@ -323,6 +323,20 @@ function up()
         :TariffItemPartnerRefRevisions,
     )
 
+    contractpartnerroles = map(["Policy Holder" "Premium Payer"]) do val
+        save!(ContractPartnerRole(value=val))
+    end
+    tariffitempartnerroles = map(["Insured Person" "2nd Insured Person"]) do val
+        save!(TariffItemPartnerRole(value=val))
+    end
+    tariffitemtariffroles = map(["Main Coverage - Life" "Supplementary Coverage - Occupational Disablity" "Supplementary Coverage - Terminal Illness" "Profit participation"]) do val
+        save!(TariffItemRole(value=val))
+    end
+
+    productpartroles = map(["Main Coverage - Life" "Supplementary Coverage - Occupational Disablity" "Supplementary Coverage - Terminal Illness" "Profit participation"]) do val
+        save!(ProductPartRole(value=val))
+    end
+
 end
 
 function down()

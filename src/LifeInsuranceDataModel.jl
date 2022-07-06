@@ -11,6 +11,9 @@ import SearchLight
 using SearchLight
 import BitemporalPostgres
 using BitemporalPostgres
+include("DDL.jl")
+using .DDL
+export down, up
 include("InsuranceContracts.jl")
 using .InsuranceContracts
 export Contract,

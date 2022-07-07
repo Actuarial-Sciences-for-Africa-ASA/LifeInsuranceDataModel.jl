@@ -18,12 +18,9 @@ if (haskey(ENV, "GENIE_ENV") && ENV["GENIE_ENV"] == "dev")
     end
 end
 
+LifeInsuranceDataModel.up()
 
 @testset "CreateContract" begin
-
-    SearchLight.Configuration.load() |> SearchLight.connect
-    SearchLight.Migrations.create_migrations_table()
-    SearchLight.Migrations.up()
 
     cpRole = Dict{String,Int64}()
     map(find(LifeInsuranceDataModel.ContractPartnerRole)) do entry

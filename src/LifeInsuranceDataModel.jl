@@ -46,29 +46,8 @@ using .InsuranceTariffs
 
 export Product, ProductRevision, ProductPart, ProductPartRevision, ProductPartRole, Tariff, TariffRevision
 export ContractSection, ProductItemSection, PartnerSection, TariffSection, csection, pisection, tsection, psection
-export insurancecontracts_view
 
-"""
-Role 
-
-
-  role of a relationship 
-
-"""
-abstract type Role <: AbstractModel end
-
-function get_id(role::Role)::DbId
-    role.id
-end
-function get_domain(role::Role)::DbId
-    role.domain
-end
-function get_value(role::Role)::DbId
-    role.value
-end
-
-
-"""
+""""
 PartnerSection
 
     is a section (see above) of a Partner entity
@@ -345,4 +324,26 @@ function connect()
     end
 end
 
+function load_roles()
+    contractpartnerroles = map(["Policy Holder" "Premium Payer"]) do val
+        save!(ContractPartnerRole(value=val))
+    end
+    tariffitempartnerroles = map(["Insured Person" "2nd Insured Person"]) do val
+        save!(TariffItemPartnerRole(value=val))
+    end
+    tariffitemtariffroles = map(["Main Coverage - Life" "Supplementary Coverage - Occupational Disablity" "Supplementary Coverage - Terminal Illness" "Profit participation"]) do val
+        save!(TariffItemRole(value=val))
+    end
+
+    productpartroles = map(["Main Coverage - Life" "Supplementary Coverage - Occupational Disablity" "Supplementary Coverage - Terminal Illness" "Profit participation"]) do val
+        save!(ProductPartRole(value=val))
+    end
+end
+
+function up()
+    SearchLight.Configuration.load() |> SearchLight.connect
+    SearchLight.Migrations.create_migrations_table()
+    SearchLight.Migrations.up()
+    load_roles()
+end
 end #module

@@ -44,7 +44,7 @@ include("InsuranceTariffs.jl")
 using .InsuranceTariffs
 
 export Product, ProductRevision, ProductPart, ProductPartRevision, ProductPartRole, Tariff, TariffRevision
-export ContractSection, ProductItemSection, PartnerSection, TariffSection, csection, pisection, tsection, psection, up
+export ContractSection, ProductItemSection, PartnerSection, TariffSection, csection, pisection, tsection, psection, load_data_model
 
 """"
 PartnerSection
@@ -339,7 +339,7 @@ function load_roles()
     end
 end
 
-function up()
+function load_data_model()
     SearchLight.Configuration.load() |> SearchLight.connect
     SearchLight.Migrations.create_migrations_table()
     SearchLight.Migrations.up()

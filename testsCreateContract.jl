@@ -18,7 +18,7 @@ if (haskey(ENV, "GENIE_ENV") && ENV["GENIE_ENV"] == "dev")
     end
 end
 
-LifeInsuranceDataModel.load_data_model()
+LifeInsuranceDataModel.load_model()
 
 @testset "CreateContract" begin
 

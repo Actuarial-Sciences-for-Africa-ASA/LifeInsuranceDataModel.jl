@@ -13,7 +13,6 @@ import BitemporalPostgres
 using BitemporalPostgres
 include("DDL.jl")
 using .DDL
-export down, up
 include("InsuranceContracts.jl")
 using .InsuranceContracts
 export Contract,
@@ -45,7 +44,7 @@ include("InsuranceTariffs.jl")
 using .InsuranceTariffs
 
 export Product, ProductRevision, ProductPart, ProductPartRevision, ProductPartRole, Tariff, TariffRevision
-export ContractSection, ProductItemSection, PartnerSection, TariffSection, csection, pisection, tsection, psection
+export ContractSection, ProductItemSection, PartnerSection, TariffSection, csection, pisection, tsection, psection, up
 
 """"
 PartnerSection

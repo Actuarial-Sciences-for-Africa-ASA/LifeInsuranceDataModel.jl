@@ -44,8 +44,8 @@ include("InsuranceTariffs.jl")
 using .InsuranceTariffs
 
 export Product, ProductRevision, ProductPart, ProductPartRevision, ProductPartRole, Tariff, TariffRevision
-export ContractSection, ProductItemSection, PartnerSection, TariffSection, csection, pisection, tsection, psection, load_model
-export ProductSection, ProductPartSection, prsection
+export ContractSection, ProductItemSection, PartnerSection, ProductSection, ProductPartSection, TariffSection, csection, pisection, tsection, psection, prsection, load_model
+
 
 """"
 PartnerSection
@@ -77,10 +77,10 @@ end
 """
 ProductPartSection 
 
-is a section (see above) of a ProductPart entity
+is a section (see above) of a Product entity
 """
 @kwdef mutable struct ProductPartSection
-    revision::ProductPartRevision = ProductPartRevision()
+    rev::ProductPartRevision = ProductPartRevision()
     ref::TariffSection = TariffSection()
 end
 
@@ -99,7 +99,7 @@ is a section (see above) of a Product entity
 end
 
 """
-TariffItemPartnerReference is a reference from a TariffItem to a Partner entity
+TariffItemPartnerReference is a reference from a TariffItem component to a Partner entity
 For instance, typically an insured person
 """
 @kwdef mutable struct TariffItemPartnerReference
@@ -109,7 +109,7 @@ end
 
 
 """
-TariffItemTariffReference is a reference from a TariffItem to a Tariff entity
+TariffItemTariffReference is a reference from a TariffItem component to a Tariff entity
 """
 @kwdef mutable struct TariffItemTariffReference
     rev::TariffItemRevision = TariffItemRevision()
@@ -132,11 +132,18 @@ ProductItemSection is a section (see above) of a ProductItem component
     tariff_items::Vector{TariffItemSection} = [TariffItemSection]
 end
 
+"""
+ContractPartnerReference is a reference to a Partner entity
+"""
 @kwdef mutable struct ContractPartnerReference
     rev::ContractPartnerRefRevision = TariffItemContractPartnerRefRevision()
     ref::PartnerSection = PartnerSection()
 end
 
+"""
+ContractSection
+???
+"""
 @kwdef mutable struct ContractSection
     tsdb_validfrom::TimeZones.ZonedDateTime = now(tz"UTC")
     tsw_validfrom::TimeZones.ZonedDateTime = now(tz"UTC")
@@ -314,6 +321,7 @@ function prsection(product_id::Integer, tsdb_validfrom, tsworld_validfrom)::Prod
         end,
     )
 end
+
 function history_forest(history_id::Int)
     connect()
     BitemporalPostgres.Node(ValidityInterval(), mkforest(DbId(history_id),

@@ -130,7 +130,7 @@ LifeInsuranceDataModel.load_model()
     commit_workflow!(w0)
 
     p2 = Product()
-    pr2 = ProductRevision(description="Life Risk Occupatational")
+    pr2 = ProductRevision(description="Life Risk Occupational")
 
     pp2 = ProductPart()
     ppr2 = ProductPartRevision(ref_tariff=t.id, ref_role=ppRole["Main Coverage - Life"], description="Main Coverage - Life")
@@ -171,7 +171,7 @@ LifeInsuranceDataModel.load_model()
     create_subcomponent!(c, cpr, cprr, w1)
     # pi 1
     cpi = ProductItem(ref_super=c.id)
-    cpir = ProductItemRevision(position=1, description="from contract creation")
+    cpir = ProductItemRevision(position=1, ref_product=p.id, description="from contract creation")
     create_subcomponent!(c, cpi, cpir, w1)
     # pi 1 ti 1 
     pit = TariffItem(ref_super=cpi.id)

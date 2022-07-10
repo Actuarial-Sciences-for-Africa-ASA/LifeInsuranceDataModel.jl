@@ -57,6 +57,7 @@ ProductItemRevision
   position::Integer = 0::Int64
   ref_validfrom::DbId = InfinityKey
   ref_invalidfrom::DbId = InfinityKey
+  ref_product::DbId= InfinityKey
   description::String = ""
 end
 

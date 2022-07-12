@@ -20,5 +20,5 @@ makedocs(
 # See "Hosting Documentation" and deploydocs() in the Documenter manual
 # for more information.
 deploydocs(
-    repo="github.com/michaelfliegner/LifeInsuranceDataModel.jl"
+    repo="Actuarial-Sciences-for-Africa-ASA/BitemporalReactive.jl/LifeInsuranceDataModel.jl"
 )

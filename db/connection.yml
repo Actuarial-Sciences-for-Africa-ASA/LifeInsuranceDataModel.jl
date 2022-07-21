@@ -5,7 +5,7 @@ dev:
   database: postgres
   host: 127.0.0.1
   username: postgres
-  password: pg
+  password: postgres
   port: 5432
   config: log_queries=false, log_level=Error
 

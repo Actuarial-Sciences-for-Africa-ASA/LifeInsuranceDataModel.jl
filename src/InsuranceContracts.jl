@@ -141,10 +141,10 @@ TariffItemRevision
   ref_invalidfrom::DbId = InfinityKey
   description::String = ""
   ref_tariff::DbId = DbId()
-  net_premium::Float64
-  annuity_immediate::Float64
-  deferment::Integer
-  annuity_due::Float64
+  net_premium::Float64 = 0.0
+  annuity_immediate::Float64 = 0.0
+  deferment::Integer = 0 
+  annuity_due::Float64 = 0.0
 end
 
 """

@@ -143,7 +143,7 @@ TariffItemRevision
   ref_tariff::DbId = DbId()
   net_premium::Float64
   annuity_immediate::Float64
-  deferment::Intger
+  deferment::Integer
   annuity_due::Float64
 end
 

@@ -57,7 +57,7 @@ ProductItemRevision
   position::Integer = 0::Int64
   ref_validfrom::DbId = InfinityKey
   ref_invalidfrom::DbId = InfinityKey
-  ref_product::DbId= InfinityKey
+  ref_product::DbId = InfinityKey
   description::String = ""
 end
 
@@ -141,6 +141,10 @@ TariffItemRevision
   ref_invalidfrom::DbId = InfinityKey
   description::String = ""
   ref_tariff::DbId = DbId()
+  net_premium::Float64
+  annuity_immediate::Float64
+  deferment::Intger
+  annuity_due::Float64
 end
 
 """

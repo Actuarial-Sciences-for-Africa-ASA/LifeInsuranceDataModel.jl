@@ -13,8 +13,8 @@ Tariff
 """
 @kwdef mutable struct Tariff <: BitemporalPostgres.Component
   id::DbId = DbId()
-  ref_history :: DbId = InfinityKey  
-  ref_version :: DbId = InfinityKey  
+  ref_history::DbId = InfinityKey
+  ref_version::DbId = InfinityKey
 end
 
 """
@@ -25,10 +25,11 @@ Tariff_Revision
 """
 @kwdef mutable struct TariffRevision <: BitemporalPostgres.ComponentRevision
   id::DbId = DbId()
-  ref_component :: DbId = InfinityKey   
-  ref_validfrom::DbId = InfinityKey 
-  ref_invalidfrom::DbId = InfinityKey 
+  ref_component::DbId = InfinityKey
+  ref_validfrom::DbId = InfinityKey
+  ref_invalidfrom::DbId = InfinityKey
   description::String = ""
+  mortality_table::String = ""
 end
 
 end # module

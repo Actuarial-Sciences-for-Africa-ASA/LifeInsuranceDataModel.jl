@@ -70,6 +70,7 @@ function up()
             column(:ref_invalidfrom, :bigint, "REFERENCES versions(id) ON DELETE CASCADE")
             column(:ref_valid, :int8range)
             column(:description, :string)
+            column(:mortality_table, :string)
         ]
     end
 
@@ -205,7 +206,7 @@ function up()
             column(:ref_invalidfrom, :bigint, "REFERENCES versions(id) ON DELETE CASCADE")
             column(:ref_valid, :int8range)
             column(:description, :string)
-        ]
+            column(:date_of_birth, :date)]
     end
 
     createRevisionsTriggerAndConstraint(

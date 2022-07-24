@@ -4,6 +4,7 @@ import SearchLight: DbId
 import Base: @kwdef
 export Partner, PartnerRevision
 using BitemporalPostgres
+using Dates
 """
 Partner
 
@@ -28,6 +29,7 @@ Partner_Revision
   ref_validfrom::DbId = InfinityKey 
   ref_invalidfrom::DbId = InfinityKey 
   description::String = ""
+  date_of_birth::Date = Date(2000,1,1)
 end
 
 end

@@ -23,6 +23,7 @@ ToStruct = "43ec2cc1-0e50-5406-a854-b7ff8fdb8dad"
 
 [compat]
 BitemporalPostgres = "1"
+Blink = "0.12"
 DataFrames = "1"
 Intervals = "1.6.0"
 JSON = "0.21.3"

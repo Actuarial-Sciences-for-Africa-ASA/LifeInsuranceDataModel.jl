@@ -316,11 +316,7 @@ function prsection(product_id::Integer, tsdb_validfrom, tsworld_validfrom)::Prod
 end
 function history_forest(history_id::Int)
     connect()
-    BitemporalPostgres.Node(ValidityInterval(), mkforest(DbId(history_id),
-        MaxDate,
-        ZonedDateTime(1900, 1, 1, 0, 0, 0, 0, tz"UTC"),
-        MaxDate,
-    ))
+    BitemporalPostgres.Node(ValidityInterval(), mkforest(DbId(history_id)))
 end
 
 function get_contracts()

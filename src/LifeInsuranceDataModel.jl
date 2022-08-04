@@ -323,43 +323,6 @@ function history_forest(history_id::Int)
     ))
 end
 
-function mkhdict(
-    hid::DbId,
-    tsdb_invalidfrom::ZonedDateTime,
-    tsworld_validfrom::ZonedDateTime,
-    tsworld_invalidfrom::ZonedDateTime,
-)
-    map(
-        i::ValidityInterval -> Dict{String,Any}(
-            "interval" => i,
-            "shadowed" => Vector{Dict{String,Any}}(mkforest(hid, i.tsdb_validfrom, i.tsworld_validfrom, i.tsworld_invalidfrom),)
-        ),
-        find(
-            ValidityInterval,
-            SQLWhereExpression(
-                "ref_history=? AND  upper(tsrdb)=? AND tstzrange(?,?) * tsrworld = tsrworld",
-                hid,
-                tsdb_invalidfrom,
-                tsworld_validfrom,
-                tsworld_invalidfrom,
-            ),
-        ),
-    )
-end
-
-function renderhistory(history_id::Int)
-    renderhforest(BitemporalPostgres.Node(Nothing,
-            mkforest(
-                DbId(history_id),
-                MaxDate,
-                ZonedDateTime(1900, 1, 1, 0, 0, 0, 0, tz"UTC"),
-                MaxDate,
-            )),
-        0,
-    )
-end
-
-
 function get_contracts()
     connect()
     find(Contract)

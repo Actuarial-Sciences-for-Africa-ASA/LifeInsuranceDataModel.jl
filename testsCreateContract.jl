@@ -225,6 +225,6 @@ LifeInsuranceDataModel.load_model()
     # end of mutations
 end
 
-hforest = mkforest(DbId(3), MaxDate, ZonedDateTime(1900, 1, 1, 0, 0, 0, 0, tz"UTC"), MaxDate)
+hforest = mkforest(DbId(3))
 print_tree(hforest)
 

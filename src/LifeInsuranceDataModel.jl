@@ -180,53 +180,80 @@ function get_revision(
     )[1]
 end
 
+function get_revision2(
+    ctype::Type{CT},
+    rtype::Type{RT},
+    hid::DbId,
+    vid::DbId,
+)::Vector{RT} where {CT<:Component,RT<:ComponentRevision}
+    find(
+        rtype,
+        SQLWhereExpression(
+            "ref_component=? and ref_valid  @> BIGINT ?",
+            find(ctype, SQLWhereExpression("ref_history=?", hid))[1].id,
+            vid,
+        ),
+    )
+end
+
+function get_revision2(
+    rtype::Type{RT},
+    cid::DbId,
+    vid::DbId,
+)::Vector{RT} where {RT<:ComponentRevision}
+    find(
+        rtype,
+        SQLWhereExpression(
+            "ref_component=? and ref_valid  @> BIGINT ?",
+            cid,
+            vid
+        ),
+    )
+end
+
 function pisection(history_id::Integer, version_id::Integer, tsdb_validfrom, tsworld_validfrom)::Vector{ProductItemSection}
     pis = find(ProductItem, SQLWhereExpression(
         "ref_history = BIGINT ? ", DbId(history_id)))
-    map(pis) do pi
-        let pir = get_revision(
-                ProductItemRevision,
-                pi.id,
-                DbId(version_id),
-            ),
-            trs = find(TariffItem, SQLWhereExpression("ref_history = BIGINT ? and ref_super = BIGINT ? ", DbId(history_id), pi.id)),
-            pitrs = map(trs) do tr
-                let trr = get_revision(
-                        TariffItemRevision,
-                        tr.id,
-                        DbId(version_id)
-                    ),
-                    ts = tsection(trr.ref_tariff.value, tsdb_validfrom, tsworld_validfrom),
-                    pitrprs = find(TariffItemPartnerRef, SQLWhereExpression("ref_history = BIGINT ? and ref_super = BIGINT ? ", DbId(history_id), tr.id)),
-                    pitrprrs = map(pitrprs) do pr
-                        let prr = get_revision(
-                                TariffItemPartnerRefRevision,
-                                pr.id,
-                                DbId(version_id)
-                            ),
-                            ps = psection(prr.ref_partner.value, tsdb_validfrom, tsworld_validfrom)
+    collect(Iterators.flatten(map(pis) do pi
+        map(get_revision2(
+            ProductItemRevision,
+            pi.id,
+            DbId(version_id),
+        )) do pir
+            let trs = find(TariffItem, SQLWhereExpression("ref_history = BIGINT ? and ref_super = BIGINT ? ", DbId(history_id), pi.id)),
+                pitrs = map(trs) do tr
+                    let trr = get_revision(
+                            TariffItemRevision,
+                            tr.id,
+                            DbId(version_id)
+                        ),
+                        ts = tsection(trr.ref_tariff.value, tsdb_validfrom, tsworld_validfrom),
+                        pitrprs = find(TariffItemPartnerRef, SQLWhereExpression("ref_history = BIGINT ? and ref_super = BIGINT ? ", DbId(history_id), tr.id)),
+                        pitrprrs = collect(Iterators.flatten(
+                            map(pitrprs) do pr
+                                map(get_revision2(
+                                    TariffItemPartnerRefRevision,
+                                    pr.id,
+                                    DbId(version_id)
+                                )) do prr
+                                    let ps = psection(prr.ref_partner.value, tsdb_validfrom, tsworld_validfrom)
 
-                            TariffItemPartnerReference(prr, ps)
-                        end
+                                        TariffItemPartnerReference(prr, ps)
+                                    end
+                                end
+                            end))
+
+                        TariffItemSection(TariffItemTariffReference(trr, ts), pitrprrs)
                     end
-
-                    TariffItemSection(TariffItemTariffReference(trr, ts), pitrprrs)
                 end
+
+                ProductItemSection(
+                    revision=pir,
+                    tariff_items=pitrs
+                )
             end
-
-            ProductItemSection(
-                revision=pir,
-                tariff_items=pitrs
-            )
-
-
-
         end
-
-
-
-
-    end
+    end))
 end
 
 function csection(contract_id::Integer, tsdb_validfrom, tsworld_validfrom)::ContractSection

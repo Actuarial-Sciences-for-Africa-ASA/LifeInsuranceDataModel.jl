@@ -311,7 +311,7 @@ function up()
             column(
                 :ref_component,
                 :bigint,
-                "REFERENCES tariffitems(id) ON DELETE CASCADE",
+                "REFERENCES TariffItemPartnerRefs(id) ON DELETE CASCADE",
             )
             column(:ref_role, :bigint, "REFERENCES tariffitempartnerroles(id) ON DELETE CASCADE")
             column(:ref_validfrom, :bigint, "REFERENCES versions(id) ON DELETE CASCADE")

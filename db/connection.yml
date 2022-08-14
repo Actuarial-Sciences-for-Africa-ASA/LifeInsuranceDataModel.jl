@@ -2,7 +2,7 @@ env: ENV["GENIE_ENV"]
 
 dev:
   adapter: PostgreSQL
-  database: postgres
+  dbname: postgres
   host: 127.0.0.1
   username: postgres
   password: postgres

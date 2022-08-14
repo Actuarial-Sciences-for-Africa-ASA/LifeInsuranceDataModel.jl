@@ -149,20 +149,45 @@ end
         Dict{DbId,Union{PartnerSection,ContractSection,TariffSection}}()
 end
 
+abstract type VersionException end
+
+@kwdef mutable struct NoVersionFound <: VersionException
+    type::Type{Any} = Any
+    cid::Integer = 0
+    vid::Integer = 0
+end
+
+@kwdef mutable struct TooManyVersionsFound <: VersionException
+    type::Type{Any} = Any
+    cid::Integer = 0
+    vid::Integer = 0
+end
+
+
 function get_revision(
     ctype::Type{CT},
     rtype::Type{RT},
     hid::DbId,
     vid::DbId,
 ) where {CT<:Component,RT<:ComponentRevision}
-    find(
-        rtype,
-        SQLWhereExpression(
-            "ref_component=? and ref_valid  @> BIGINT ?",
-            find(ctype, SQLWhereExpression("ref_history=?", hid))[1].id,
-            vid,
-        ),
-    )[1]
+    let cid = find(ctype, SQLWhereExpression("ref_history=?", hid))[1].id,
+        res = find(
+            rtype,
+            SQLWhereExpression(
+                "ref_component=? and ref_valid  @> BIGINT ?",
+                cid,
+                vid,
+            ),
+        )
+
+        if (length(res) == 1)
+            res[1]
+        elseif (length(res) == 0)
+            throw(NoVersionFound(rtype, cid, vid))
+        else
+            throw(TooManyVersionsFound(rtype, cid, vid))
+        end
+    end
 end
 
 function get_revision(
@@ -170,52 +195,74 @@ function get_revision(
     cid::DbId,
     vid::DbId,
 ) where {RT<:ComponentRevision}
-    find(
-        rtype,
-        SQLWhereExpression(
-            "ref_component=? and ref_valid  @> BIGINT ?",
-            cid,
-            vid
-        ),
-    )[1]
+    let res = find(
+            rtype,
+            SQLWhereExpression(
+                "ref_component=? and ref_valid  @> BIGINT ?",
+                cid,
+                vid
+            ),
+        )
+        if (length(res) == 1)
+            res[1]
+        elseif (length(res) == 0)
+            throw(NoVersionFound(rtype, cid, vid))
+        else
+            throw(TooManyVersionsFound(rtype, cid, vid))
+        end
+    end
 end
 
-function get_revision2(
+function get_revisionIfAny(
     ctype::Type{CT},
     rtype::Type{RT},
     hid::DbId,
     vid::DbId,
 )::Vector{RT} where {CT<:Component,RT<:ComponentRevision}
-    find(
-        rtype,
-        SQLWhereExpression(
-            "ref_component=? and ref_valid  @> BIGINT ?",
-            find(ctype, SQLWhereExpression("ref_history=?", hid))[1].id,
-            vid,
-        ),
-    )
+    let cid = find(ctype, SQLWhereExpression("ref_history=?", hid))[1].id,
+        res = find(
+            rtype,
+            SQLWhereExpression(
+                "ref_component=? and ref_valid  @> BIGINT ?",
+                cid,
+                vid,
+            ),
+        )
+
+        if (length(res) < 2)
+            res
+        else
+            throw(TooManyVersionsFound(rtype, cid, vid))
+        end
+    end
 end
 
-function get_revision2(
+function get_revisionIfAny(
     rtype::Type{RT},
     cid::DbId,
     vid::DbId,
 )::Vector{RT} where {RT<:ComponentRevision}
-    find(
-        rtype,
-        SQLWhereExpression(
-            "ref_component=? and ref_valid  @> BIGINT ?",
-            cid,
-            vid
-        ),
-    )
+    let res = find(
+            rtype,
+            SQLWhereExpression(
+                "ref_component=? and ref_valid  @> BIGINT ?",
+                cid,
+                vid
+            ),
+        )
+        if (length(res) < 2)
+            res
+        else
+            throw(TooManyVersionsFound(rtype, cid, vid))
+        end
+    end
 end
 
 function pisection(history_id::Integer, version_id::Integer, tsdb_validfrom, tsworld_validfrom)::Vector{ProductItemSection}
     pis = find(ProductItem, SQLWhereExpression(
         "ref_history = BIGINT ? ", DbId(history_id)))
     collect(Iterators.flatten(map(pis) do pi
-        map(get_revision2(
+        map(get_revisionIfAny(
             ProductItemRevision,
             pi.id,
             DbId(version_id),
@@ -231,7 +278,7 @@ function pisection(history_id::Integer, version_id::Integer, tsdb_validfrom, tsw
                         pitrprs = find(TariffItemPartnerRef, SQLWhereExpression("ref_history = BIGINT ? and ref_super = BIGINT ? ", DbId(history_id), tr.id)),
                         pitrprrs = collect(Iterators.flatten(
                             map(pitrprs) do pr
-                                map(get_revision2(
+                                map(get_revisionIfAny(
                                     TariffItemPartnerRefRevision,
                                     pr.id,
                                     DbId(version_id)

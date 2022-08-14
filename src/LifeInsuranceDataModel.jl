@@ -307,86 +307,95 @@ function csection(contract_id::Integer, tsdb_validfrom, tsworld_validfrom)::Cont
     connect()
     history_id = find(Contract, SQLWhereExpression("id=?", DbId(contract_id)))[1].ref_history.value
     version_id = findversion(DbId(history_id), tsdb_validfrom, tsworld_validfrom).value
-    ContractSection(
-        ref_history=DbId(history_id),
-        ref_version=DbId(version_id),
-        revision=get_revision(
+    let cr = get_revision(
             Contract,
             ContractRevision,
             DbId(history_id),
             DbId(version_id),
-        ),
-        partner_refs=
-        let cprrs = find(ContractPartnerRef, SQLWhereExpression("ref_history = BIGINT ? ", DbId(history_id)))
-            map(cprrs) do cprr
-                let cprr = get_revision(
+        )
+        ContractSection(
+            ref_history=DbId(history_id),
+            ref_version=DbId(version_id),
+            revision=cr,
+            partner_refs=
+            let cprs = find(ContractPartnerRef, SQLWhereExpression("ref_history = BIGINT ? ", DbId(history_id)))
+                collect(Iterators.flatten(map(cprs) do cpr
+                    map(get_revisionIfAny(
                         ContractPartnerRefRevision,
-                        cprr.id,
+                        cpr.id,
                         DbId(version_id)
-                    ),
-                    ps = psection(cprr.ref_partner.value, tsdb_validfrom, tsworld_validfrom)
+                    )) do cprr
+                        let ps = psection(cprr.ref_partner.value, tsdb_validfrom, tsworld_validfrom)
 
-                    ContractPartnerReference(cprr, ps)
-                end
-            end
-        end,
-        product_items=pisection(history_id, version_id, tsdb_validfrom, tsworld_validfrom),
-        ref_entities=Dict{DbId,Union{PartnerSection,ContractSection,TariffSection}}(),
-    )
+                            ContractPartnerReference(cprr, ps)
+                        end
+                    end
+                end))
+            end,
+            product_items=pisection(history_id, version_id, tsdb_validfrom, tsworld_validfrom),
+            ref_entities=Dict{DbId,Union{PartnerSection,ContractSection,TariffSection}}(),
+        )
+    end
 end
 
 function psection(partner_id::Integer, tsdb_validfrom, tsworld_validfrom)::PartnerSection
     connect()
     history_id = find(Partner, SQLWhereExpression("id=?", DbId(partner_id)))[1].ref_history
     version_id = findversion(history_id, tsdb_validfrom, tsworld_validfrom).value
-    PartnerSection(
-        revision=get_revision(
+    let pr = get_revision(
             Partner,
             PartnerRevision,
             DbId(history_id),
             DbId(version_id),
-        ),
-    )
+        )
+        PartnerSection(
+            revision=pr,
+        )
+    end
 end
 
 function tsection(tariff_id::Integer, tsdb_validfrom, tsworld_validfrom)::TariffSection
     connect()
     history_id = find(Tariff, SQLWhereExpression("id=?", DbId(tariff_id)))[1].ref_history
     version_id = findversion(DbId(history_id), tsdb_validfrom, tsworld_validfrom).value
-    TariffSection(
-        revision=get_revision(
+    let tr = get_revision(
             Tariff,
             TariffRevision,
             DbId(history_id),
-            DbId(version_id),
-        ),
-    )
+            DbId(version_id),)
+        TariffSection(
+            revision=tr
+        )
+    end
 end
 
 function prsection(product_id::Integer, tsdb_validfrom, tsworld_validfrom)::ProductSection
     connect()
     history_id = find(Product, SQLWhereExpression("id=?", DbId(product_id)))[1].ref_history
     version_id = findversion(DbId(history_id), tsdb_validfrom, tsworld_validfrom).value
-    ProductSection(
-        revision=get_revision(
+    let pr = get_revision(
             Product,
             ProductRevision,
             DbId(history_id),
-            DbId(version_id)),
-        parts=let pts = find(ProductPart, SQLWhereExpression("ref_history = BIGINT ? ", DbId(history_id)))
-            map(pts) do pt
-                let ptr = get_revision(
+            DbId(version_id))
+        ProductSection(
+            revision=pr,
+            parts=let pts = find(ProductPart, SQLWhereExpression("ref_history = BIGINT ? ", DbId(history_id)))
+                collect(Iterators.flatten(map(pts) do pt
+                    map(get_revisionIfAny(
                         ProductPartRevision,
                         pt.id,
                         DbId(version_id)
-                    ),
-                    ref = tsection(ptr.ref_tariff.value, tsdb_validfrom, tsworld_validfrom)
+                    )) do ptr
+                        let ref = tsection(ptr.ref_tariff.value, tsdb_validfrom, tsworld_validfrom)
 
-                    ProductPartSection(ptr, ref)
-                end
+                            ProductPartSection(ptr, ref)
+                        end
+                    end
+                end))
             end
-        end,
-    )
+        )
+    end
 end
 function history_forest(history_id::Int)
     connect()

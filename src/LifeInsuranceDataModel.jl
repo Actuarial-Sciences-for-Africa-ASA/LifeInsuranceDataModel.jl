@@ -132,11 +132,19 @@ ProductItemSection is a section (see above) of a ProductItem component
     tariff_items::Vector{TariffItemSection} = [TariffItemSection]
 end
 
+"""
+ContractPartnerReference
+    holds attributes of the reference from contract and a partner section
+"""
 @kwdef mutable struct ContractPartnerReference
     rev::ContractPartnerRefRevision = TariffItemContractPartnerRefRevision()
     ref::PartnerSection = PartnerSection()
 end
 
+"""
+ContractSection
+    ContractSection is a section (see above) of a contract entity
+"""
 @kwdef mutable struct ContractSection
     tsdb_validfrom::TimeZones.ZonedDateTime = now(tz"UTC")
     tsw_validfrom::TimeZones.ZonedDateTime = now(tz"UTC")
@@ -149,6 +157,11 @@ end
         Dict{DbId,Union{PartnerSection,ContractSection,TariffSection}}()
 end
 
+"""
+function pisection(history_id::Integer, version_id::Integer, tsdb_validfrom, tsworld_validfrom)::Vector{ProductItemSection}
+
+    pisection retrieves the vector of a contract's productitem sections
+"""
 function pisection(history_id::Integer, version_id::Integer, tsdb_validfrom, tsworld_validfrom)::Vector{ProductItemSection}
     pis = find(ProductItem, SQLWhereExpression(
         "ref_history = BIGINT ? ", DbId(history_id)))
@@ -194,6 +207,11 @@ function pisection(history_id::Integer, version_id::Integer, tsdb_validfrom, tsw
     end))
 end
 
+"""
+csection(contract_id::Integer, tsdb_validfrom, tsworld_validfrom)::ContractSectio
+
+    csection retrieves the section of a contract or throws NoVersionFound 
+"""
 function csection(contract_id::Integer, tsdb_validfrom, tsworld_validfrom)::ContractSection
     connect()
     history_id = find(Contract, SQLWhereExpression("id=?", DbId(contract_id)))[1].ref_history.value
@@ -229,6 +247,12 @@ function csection(contract_id::Integer, tsdb_validfrom, tsworld_validfrom)::Cont
     end
 end
 
+"""
+psection(partner_id::Integer, tsdb_validfrom, tsworld_validfrom)::PartnerSection
+
+    psection retrieves a section of a partner  or throws NoVersionFound
+
+"""
 function psection(partner_id::Integer, tsdb_validfrom, tsworld_validfrom)::PartnerSection
     connect()
     history_id = find(Partner, SQLWhereExpression("id=?", DbId(partner_id)))[1].ref_history
@@ -245,6 +269,12 @@ function psection(partner_id::Integer, tsdb_validfrom, tsworld_validfrom)::Partn
     end
 end
 
+"""
+tsection(tariff_id::Integer, tsdb_validfrom, tsworld_validfrom)::TariffSection
+
+    tsection retrieves a section of a tariff or throws NoVersionFound
+
+"""
 function tsection(tariff_id::Integer, tsdb_validfrom, tsworld_validfrom)::TariffSection
     connect()
     history_id = find(Tariff, SQLWhereExpression("id=?", DbId(tariff_id)))[1].ref_history
@@ -260,6 +290,12 @@ function tsection(tariff_id::Integer, tsdb_validfrom, tsworld_validfrom)::Tariff
     end
 end
 
+"""
+prsection(product_id::Integer, tsdb_validfrom, tsworld_validfrom)::ProductSection
+
+    prsection retrieves a section of a product or throws NoVersionFound
+
+"""
 function prsection(product_id::Integer, tsdb_validfrom, tsworld_validfrom)::ProductSection
     connect()
     history_id = find(Product, SQLWhereExpression("id=?", DbId(product_id)))[1].ref_history
@@ -288,16 +324,29 @@ function prsection(product_id::Integer, tsdb_validfrom, tsworld_validfrom)::Prod
         )
     end
 end
+
+"""
+history_forest(history_id::Int)
+    history_forest retrieves a tree of ValidityIntervals see:[BitemporalPostgres Theory] (https://actuarial-sciences-for-africa-asa.github.io/BitemporalPostgres.jl/stable/api/theory/)
+"""
 function history_forest(history_id::Int)
     connect()
     BitemporalPostgres.Node(ValidityInterval(), mkforest(DbId(history_id)))
 end
 
+"""
+get_contracts
+    get_contracts retrieves all contract entities - search capabilities to be added 
+"""
 function get_contracts()
     connect()
     find(Contract)
 end
 
+"""
+connect
+    database connect as configured 
+"""
 function connect()
     try
         SearchLight.connection()
@@ -306,6 +355,10 @@ function connect()
     end
 end
 
+"""
+load_roles
+    create the role ids of the model's relations
+"""
 function load_roles()
     contractpartnerroles = map(["Policy Holder" "Premium Payer"]) do val
         save!(ContractPartnerRole(value=val))
@@ -321,6 +374,11 @@ function load_roles()
         save!(ProductPartRole(value=val))
     end
 end
+
+"""
+load_model
+    create the DDL of the model
+"""
 
 function load_model()
     SearchLight.Configuration.load() |> SearchLight.connect

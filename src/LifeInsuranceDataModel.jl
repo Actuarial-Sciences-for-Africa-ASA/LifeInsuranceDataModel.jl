@@ -44,7 +44,7 @@ include("InsuranceTariffs.jl")
 using .InsuranceTariffs
 
 export Product, ProductRevision, ProductPart, ProductPartRevision, ProductPartRole, Tariff, TariffRevision
-export ContractSection, ProductItemSection, PartnerSection, TariffSection, csection, pisection, tsection, psection, load_model
+export ContractSection, ProductItemSection, PartnerSection, TariffItemSection, TariffSection, csection, pisection, tsection, psection, load_model
 export ProductSection, ProductPartSection, prsection
 
 """"

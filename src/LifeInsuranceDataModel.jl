@@ -351,7 +351,7 @@ function connect()
     try
         SearchLight.connection()
     catch e
-        SearchLight.connect(Dict())
+        SearchLight.connect
     end
 end
 

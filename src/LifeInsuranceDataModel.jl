@@ -348,7 +348,7 @@ connect
     database connect as configured 
 """
 function connect()
-        SearchLight.connect(Dict())
+    SearchLight.connect(SearchLight.Configuration.load())
 end
 
 """

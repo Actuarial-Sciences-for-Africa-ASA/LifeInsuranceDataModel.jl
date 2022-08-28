@@ -377,7 +377,7 @@ load_model
 """
 
 function load_model()
-    SearchLight.Configuration.load() |> SearchLight.connect
+    connect()
     SearchLight.Migrations.create_migrations_table()
     DDL.up()
     load_roles()

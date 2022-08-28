@@ -20,7 +20,5 @@ test:
   adapter: PostgreSQL
   database: postgres
   host: 127.0.0.1
-  username: 
-  password: 
   port: 5432
   config: log_queries=true, log_level=Error

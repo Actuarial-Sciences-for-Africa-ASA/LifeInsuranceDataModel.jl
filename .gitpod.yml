@@ -3,7 +3,7 @@ image:
 tasks:
   - init: cd .. &&
       echo 'PATH_add /home/gitpod/julia-1.6.7/bin' > .envrc
+      echo "export SEARCHLIGHT_USERNAME="bitemporalpostgres"' >> .envrc
+      echo "export SEARCHLIGHT_PASSWORD="jw8s0F49KL"' >> .envrc
   - command: python3 -m http.server 8080 -d docs/build
   - command: gp preview $(gp url 8080)
-  - command: cat db/connectionGITPOD.yml >db/connection.yml
-  

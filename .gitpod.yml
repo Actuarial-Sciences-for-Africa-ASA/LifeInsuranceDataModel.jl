@@ -2,7 +2,6 @@ image:
   file: .gitpod.Dockerfile
 tasks:
   - init: echo 'PATH_add /home/gitpod/julia-1.6.7/bin' > /workspace/.envrc  \
-      && echo 'export SEARCHLIGHT_USERNAME="postgres"' >> /workspace/.envrc \
-      && echo 'export SEARCHLIGHT_PASSWORD="postgres"' >> /workspace/.envrc   
+      && echo 'export SEARCHLIGHT_USERNAME="gitpod"' >> /workspace/.envrc 
   - command: python3 -m http.server 8080 -d docs/build
   - command: gp preview $(gp url 8080)

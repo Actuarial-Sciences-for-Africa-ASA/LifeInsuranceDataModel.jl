@@ -348,11 +348,7 @@ connect
     database connect as configured 
 """
 function connect()
-    try
-        SearchLight.connection()
-    catch e
-        SearchLight.connect
-    end
+        SearchLight.connect(Dict())
 end
 
 """

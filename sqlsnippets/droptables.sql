@@ -31,3 +31,5 @@ drop table validityintervals;
 drop table workflows;
 drop table versions;
 drop table histories;
+drop function f_versionrange;
+drop function f_bitempranges;

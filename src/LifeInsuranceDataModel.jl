@@ -158,6 +158,29 @@ ContractSection
 end
 
 """
+create_product_instance(pi::ProductItem, p::Product)
+
+    creates tariff items of a productitem pi corresponding to
+    the product parts of a Product p referencing the respective tariffs. 
+"""
+function create_product_instance(pi::ProductItem, p::Product)
+    map(find(ProductPart, SQLWhereExpression("ref_super=?", p))) do pp
+        println(pp.id.value)
+        map(find(ProductPartRevision, SQLWhereExpression("ref_component=?", pp.id.value))) do ppr
+            println(ppr.description)
+            ti = TariffItem(ref_super=cpi.id)
+            tir = TariffItemRevision(ref_role=ppr.ref_role, ref_tariff=ppr.ref_tariff, description=ppr.description)
+            create_subcomponent!(pi, ti, tir, w4)
+            tip = TariffItemPartnerRef(ref_super=pi.id)
+            tipr = TariffItemPartnerRefRevision(ref_partner=Partner1, ref_role=PartnerRole)
+            create_subcomponent!(pi, tip, tipr, w4)
+            println(tir)
+            println(tipr)
+        end
+    end
+end
+
+"""
 function pisection(history_id::Integer, version_id::Integer, tsdb_validfrom, tsworld_validfrom)::Vector{ProductItemSection}
 
     pisection retrieves the vector of a contract's productitem sections

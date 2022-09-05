@@ -1,3 +1,15 @@
 {
-    "julia.executablePath": "~/julia-1.8.0/bin/julia"
+    "julia.executablePath": "~/julia-1.8.0/bin/julia",
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "postgres",
+            "database": "postgres",
+            "username": "gitpod",
+            "password": ""
+        }
+    ]
 }

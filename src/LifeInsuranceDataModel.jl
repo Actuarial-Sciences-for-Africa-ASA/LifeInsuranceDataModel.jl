@@ -164,7 +164,7 @@ create_product_instance(wf::Workflow; pi::ProductItem, p::Integer, refp1::Intege
     the product parts of a Product p referencing the respective tariffs
     and Partner refp1 in role prole1
 """
-function create_product_instance(wf::Workflow, pi::ProductItem, p::Integer, refp1::Integer,prole1::Integer)
+function create_product_instance(wf::Workflow, pi::ProductItem, p::Integer, refp1::Integer, prole1::Integer)
     map(find(ProductPart, SQLWhereExpression("ref_super=?", p))) do pp
         println(pp.id.value)
         map(find(ProductPartRevision, SQLWhereExpression("ref_component=?", pp.id.value))) do ppr
@@ -365,6 +365,15 @@ get_contracts
 function get_contracts()
     connect()
     find(Contract)
+end
+
+"""
+get_partners
+    get_partners retrieves all partner entities - search capabilities to be added 
+"""
+function get_partners()
+    connect()
+    find(Partner)
 end
 
 """

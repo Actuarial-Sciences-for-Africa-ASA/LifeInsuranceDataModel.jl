@@ -220,7 +220,7 @@ LifeInsuranceDataModel.load_model()
         ref_product=LifeRiskTIODProduct,
         description="from contract creation",
     )
-    create_subcomponent!(c, cpi, cpir, w4)
+    create_subcomponent!(c, cpi, cpir, w1)
 
     LifeInsuranceDataModel.create_product_instance(
         w1,

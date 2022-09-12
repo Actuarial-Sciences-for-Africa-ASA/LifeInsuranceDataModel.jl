@@ -232,14 +232,14 @@ function pisection(history_id::Integer, version_id::Integer, tsdb_validfrom, tsw
 end
 
 """
-csection(contract_id::Integer, tsdb_validfrom, tsworld_validfrom)::ContractSectio
+csection(contract_id::Integer, tsdb_validfrom, tsworld_validfrom,activeTransaction::Integer=0)::ContractSectio
 
     csection retrieves the section of a contract or throws NoVersionFound 
 """
-function csection(contract_id::Integer, tsdb_validfrom, tsworld_validfrom)::ContractSection
+function csection(contract_id::Integer, tsdb_validfrom, tsworld_validfrom, activeTransaction::Integer=0)::ContractSection
     connect()
     history_id = find(Contract, SQLWhereExpression("id=?", DbId(contract_id)))[1].ref_history.value
-    version_id = findversion(DbId(history_id), tsdb_validfrom, tsworld_validfrom).value
+    version_id = findversion(DbId(history_id), tsdb_validfrom, tsworld_validfrom, activeTransaction == 1 ? 0 : 1).value
     let cr = get_revision(
             Contract,
             ContractRevision,

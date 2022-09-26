@@ -1,6 +1,6 @@
 push!(LOAD_PATH, "../src/")
 using Documenter
-import LifeInsuranceDataModel, LifeInsuranceDataModel.InsuranceContracts, LifeInsuranceDataModel.InsurancePartners, LifeInsuranceDataModel.InsuranceProducts, LifeInsuranceDataModel.InsuranceTariffs
+import BitemporalPostgres, LifeInsuranceDataModel, LifeInsuranceDataModel.InsuranceContracts, LifeInsuranceDataModel.InsurancePartners, LifeInsuranceDataModel.InsuranceProducts, LifeInsuranceDataModel.InsuranceTariffs
 makedocs(
     sitename="LifeInsuranceDataModel",
     format=Documenter.HTML(),

@@ -6,6 +6,12 @@ export Tariff, TariffRevision
 using BitemporalPostgres
 
 """
+BitemporalPostgres.revisionTypes(entity::Val{:Tariff}) 
+  defining the ComponentRevision types occurring in Contracts
+"""
+BitemporalPostgres.revisionTypes(entity::Val{:Tariff}) = [TariffRevision]
+
+"""
 Tariff
 
   a component of a bitemporal entity
@@ -31,5 +37,10 @@ Tariff_Revision
   description::String = ""
   mortality_table::String = ""
 end
+
+Base.copy(src::TariffRevision) = TariffRevision(
+  ref_component=src.ref_component,
+  description=src.description)
+#
 
 end # module

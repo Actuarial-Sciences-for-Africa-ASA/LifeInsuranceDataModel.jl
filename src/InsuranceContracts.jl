@@ -7,6 +7,15 @@ export Contract, ContractRevision, ContractPartnerRole, ContractPartnerRef, Cont
 using BitemporalPostgres
 
 """
+BitemporalPostgres.revisionTypes(entity::Val{:Contract}) 
+  defining the ComponentRevision types occurring in Contracts
+"""
+BitemporalPostgres.revisionTypes(entity::Val{:Contract}) = [ContractPartnerRefRevision,
+  ContractRevision, ProductItemRevision,
+  TariffItemPartnerRefRevision, TariffItemRevision
+]
+
+"""
 Contract
 
   a contract component of a bitemporal entity
@@ -31,6 +40,11 @@ ContractRevision
   ref_invalidfrom::DbId = InfinityKey
   description::String = ""
 end
+
+Base.copy(src::ContractRevision) = ContractRevision(
+  ref_component=src.ref_component,
+  description=src.description,
+)
 
 """
 ProductItem
@@ -60,6 +74,11 @@ ProductItemRevision
   ref_product::DbId = InfinityKey
   description::String = ""
 end
+
+Base.copy(src::ProductItemRevision) = ProductItemRevision(
+  ref_component=src.ref_component,
+  description=src.description,)
+
 
 """
 ContractPartnerRole
@@ -102,6 +121,10 @@ ContractPartnerRefRevision
   ref_partner::DbId = DbId()
 end
 
+Base.copy(src::ContractPartnerRefRevision) = ContractPartnerRefRevision(
+  ref_component=src.ref_component,
+  description=src.description)
+
 """
 TariffItemRole
 
@@ -143,9 +166,13 @@ TariffItemRevision
   ref_tariff::DbId = DbId()
   net_premium::Float64 = 0.0
   annuity_immediate::Float64 = 0.0
-  deferment::Integer = 0 
+  deferment::Integer = 0
   annuity_due::Float64 = 0.0
 end
+
+Base.copy(src::TariffItemRevision) = TariffItemRevision(
+  ref_component=src.ref_component,
+  description=src.description)
 
 """
 TariffItemPartnerRole
@@ -187,5 +214,9 @@ TariffItemPartnerRefRevision
   description::String = ""
   ref_partner::DbId = DbId()
 end
+
+Base.copy(src::TariffItemPartnerRefRevision) = TariffItemPartnerRefRevision(
+  ref_component=src.ref_component,
+  description=src.description)
 
 end

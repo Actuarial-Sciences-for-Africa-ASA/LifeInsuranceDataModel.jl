@@ -6,6 +6,12 @@ using BitemporalPostgres
 export Product, ProductRevision, ProductPart, ProductPartRevision, ProductPartRole
 
 """
+BitemporalPostgres.revisionTypes(entity::Val{:Product}) 
+  defining the ComponentRevision types occurring in Contracts
+"""
+BitemporalPostgres.revisionTypes(entity::Val{:Product}) = [ProductRevision, ProductPartRevision]
+
+"""
 Product
 
   a component of a bitemporal entity
@@ -30,6 +36,10 @@ Procuct_Revision
   ref_invalidfrom::DbId = InfinityKey
   description::String = ""
 end
+
+Base.copy(src::ProductRevision) = ProductRevision(
+  ref_component=src.ref_component,
+  description=src.description)
 
 """
 ProductPartRole
@@ -72,32 +82,39 @@ ProcuctPart_Revision
   description::String = ""
 end
 
+Base.copy(src::ProductPartRevision) = ProductPartRevision(
+  ref_component=src.ref_component,
+  description=src.description)
 
-"""
-Tariff
-
-  a component of a bitemporal entity
-
-"""
-@kwdef mutable struct Tariff <: BitemporalPostgres.Component
-  id::DbId = DbId()
-  ref_history::DbId = InfinityKey
-  ref_version::DbId = InfinityKey
-end
-
-"""
-Tariff_Revision
-
-  a revision of a Tariff component of a bitemporal entity
-
-"""
-@kwdef mutable struct TariffRevision <: BitemporalPostgres.ComponentRevision
-  id::DbId = DbId()
-  ref_component::DbId = InfinityKey
-  ref_validfrom::DbId = InfinityKey
-  ref_invalidfrom::DbId = InfinityKey
-  description::String = ""
-end
-
-
+#"""
+#Tariff
+#
+#  a component of a bitemporal entity
+#
+#"""
+#@kwdef mutable struct Tariff <: BitemporalPostgres.Component
+#  id::DbId = DbId()
+#  ref_history::DbId = InfinityKey
+#  ref_version::DbId = InfinityKey
+#end
+#
+#"""
+#Tariff_Revision
+#
+#  a revision of a Tariff component of a bitemporal entity
+#
+#"""
+#@kwdef mutable struct TariffRevision <: BitemporalPostgres.ComponentRevision
+#  id::DbId = DbId()
+#  ref_component::DbId = InfinityKey
+#  ref_validfrom::DbId = InfinityKey
+#  ref_invalidfrom::DbId = InfinityKey
+#  description::String = ""
+#end
+#
+#Base.copy(src::TariffRevision) = TariffRevision(
+#  ref_component=src.ref_component,
+#  description=src.description)
+#
+#
 end # module

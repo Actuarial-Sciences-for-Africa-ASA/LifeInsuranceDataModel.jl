@@ -1,15 +1,11 @@
 module LifeInsuranceDataModel
 
 import Base: @kwdef
-import TimeZones
-using TimeZones
-import ToStruct
-using ToStruct
-import JSON
 using JSON
-import SearchLight
+using Logging
 using SearchLight
-import BitemporalPostgres
+using TimeZones
+using ToStruct
 using BitemporalPostgres
 include("DDL.jl")
 using .DDL
@@ -382,6 +378,8 @@ connect
 """
 function connect()
     SearchLight.connect(SearchLight.Configuration.load())
+    setfield!(SearchLight.config, :log_queries, true)
+    setfield!(SearchLight.config, :log_level, Logging.Error)
 end
 
 """

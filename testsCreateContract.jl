@@ -51,7 +51,7 @@ LifeInsuranceDataModel.load_model()
 
     p = LifeInsuranceDataModel.Partner()
     pr = LifeInsuranceDataModel.PartnerRevision(description="Partner 1")
-    w = Workflow(
+    w = Workflow(type_of_entity="Partner",
         tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"Africa/Porto-Novo"),
     )
     create_entity!(w)
@@ -66,6 +66,7 @@ LifeInsuranceDataModel.load_model()
         t = LifeInsuranceDataModel.Tariff()
         tr = LifeInsuranceDataModel.TariffRevision(description=dsc, mortality_table=mt)
         w = Workflow(
+            type_of_entity="Tariff",
             tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"Africa/Porto-Novo"),
         )
         create_entity!(w)
@@ -116,6 +117,7 @@ LifeInsuranceDataModel.load_model()
     )
 
     w0 = Workflow(
+        type_of_entity="Product",
         tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"Africa/Porto-Novo"),
     )
     create_entity!(w0)
@@ -175,6 +177,7 @@ LifeInsuranceDataModel.load_model()
 
 
     w0 = Workflow(
+        type_of_entity="Product",
         tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"Africa/Porto-Novo"),
     )
     create_entity!(w0)
@@ -195,6 +198,7 @@ LifeInsuranceDataModel.load_model()
     # Create contract blue
 
     w1 = Workflow(
+        type_of_entity="Contract",
         tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"Africa/Porto-Novo"),
     )
 
@@ -234,6 +238,7 @@ LifeInsuranceDataModel.load_model()
 
     cr1 = ContractRevision(ref_component=c.id, description="contract 1, 2nd mutation")
     w2 = Workflow(
+        type_of_entity="Contract",
         ref_history=w1.ref_history,
         tsw_validfrom=ZonedDateTime(2016, 5, 30, 21, 0, 1, 1, tz"Africa/Porto-Novo"),
     )
@@ -243,16 +248,14 @@ LifeInsuranceDataModel.load_model()
     commit_workflow!(w2)
     @test w2.ref_history == w1.ref_history
     # update Contract red
-
-    cr2 = ContractRevision(
-        ref_component=c.id,
-        description="contract 1, 3rd mutation retrospective",
-    )
     w3 = Workflow(
+        type_of_entity="Contract",
         ref_history=w2.ref_history,
         tsw_validfrom=ZonedDateTime(2015, 5, 30, 21, 0, 1, 1, tz"Africa/Porto-Novo"),
     )
     update_entity!(w3)
+    cr1 = findcomponentrevision(ContractRevision, c.id, w3.ref_version)[1]
+    cr2 = ContractRevision(ref_component=c.id, description="contract 1, 3rd mutation retrospective")
     update_component!(cr1, cr2, w3)
 
 
@@ -260,6 +263,7 @@ LifeInsuranceDataModel.load_model()
     @test w3.ref_history == w2.ref_history
 
     w4 = Workflow(
+        type_of_entity="Contract",
         ref_history=w2.ref_history,
         tsw_validfrom=ZonedDateTime(2018, 5, 30, 21, 0, 1, 1, tz"Africa/Porto-Novo"),
     )

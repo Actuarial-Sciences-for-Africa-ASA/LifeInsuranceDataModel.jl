@@ -5,7 +5,9 @@ dev:
   database: postgres
   host: 127.0.0.1 
   port: 5432
-  config: log_queries=false, log_level=Error
+  config:
+    log_queries: false
+    log_level: Error
 
 prod:
   adapter:

@@ -13,9 +13,11 @@ Current features are:
 - populating the database
 - displaying contract versions and history
 
-[Test and sample code for the BitemporalPostgres-API](testsCreateContract.jl)
+[Test and sample code for the BitemporalPostgres-API. Creation, Mutation, Committing](testsCreateContract.jl)
+[and mutations persisted pending and rolled back](testPendingMutations.jl)
 
-[The same test and sample code as a Jupyter notebook](testsCreateContract.ipynb)
+[The same test and sample code as a Jupyter notebook. Creation ...](testsCreateContract.ipynb)
+[and mutations ... ](testPendingMutations.ipynb)
 
 When You open this project in a [gitpod container](https://gitpod.io/workspaces) the test code will be executed automatically to spin up and populate the database. 
 

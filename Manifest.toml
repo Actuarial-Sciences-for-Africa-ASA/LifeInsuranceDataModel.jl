@@ -2,7 +2,7 @@
 
 julia_version = "1.8.0"
 manifest_format = "2.0"
-project_hash = "038cf0df58fa3dac651cd8412db78de03d6c1010"
+project_hash = "52720cdc6e1dd50fcb0e3384a55010b66de9830c"
 
 [[deps.AbstractTrees]]
 git-tree-sha1 = "5c0b629df8a5566a06f5fef5100b53ea56e465a0"
@@ -28,8 +28,6 @@ uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 [[deps.BitemporalPostgres]]
 deps = ["AbstractTrees", "Dates", "Intervals", "Logging", "Pkg", "SearchLight", "SearchLightPostgreSQL", "Test", "TimeZones", "ToStruct", "YAML"]
 git-tree-sha1 = "3cbc5fbc973445b02a046106420c92394ab948f3"
-repo-rev = "main"
-repo-url = "https://github.com/Actuarial-Sciences-for-Africa-ASA/BitemporalPostgres.jl"
 uuid = "e513cd14-23e6-48df-acf1-d9bc8fa5674b"
 version = "1.5.0"
 

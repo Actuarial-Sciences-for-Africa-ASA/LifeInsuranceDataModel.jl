@@ -22,3 +22,4 @@ Current features are:
 When You open this project in a [gitpod container](https://gitpod.io/workspaces) the test code will be executed automatically to spin up and populate the database. 
 
 ![UML Model](docs/src/assets/LifeInsuranceDataModel.png)
+# 

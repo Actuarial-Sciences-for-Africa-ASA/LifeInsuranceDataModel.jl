@@ -16,7 +16,7 @@ using JSON
 
 if (haskey(ENV, "GITPOD_REPO_ROOT"))
     run(```psql -f sqlsnippets/droptables.sql```)
-else
+elseif (haskey(ENV,"GENIE_ENV")& ENV["GENIE_ENV"]=="test")
     run(```psql -d postgres -f sqlsnippets/droptables.sql```)
 end
 # Loading the data model- Create tables, constraints etc. and load Roles

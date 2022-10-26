@@ -17,8 +17,7 @@ using JSON
 if (haskey(ENV, "GITPOD_REPO_ROOT"))
     run(```psql -f sqlsnippets/droptables.sql```)
 else
-    println("execute this in Your REPL")
-    println("""run(```sudo -u postgres psql -f sqlsnippets/droptables.sql```)""")
+    run(```psql -d postgres -f sqlsnippets/droptables.sql```)
 end
 # Loading the data model- Create tables, constraints etc. and load Roles
 # loading inverses of the role tables to provide role descriptions in object creation, for instance like in: "ref_role=cpRole["Policy Holder"]

@@ -150,7 +150,6 @@ ContractSection
     revision::ContractRevision = ContractRevision()
     partner_refs::Vector{ContractPartnerReference} = [ContractPartnerReference]
     product_items::Vector{ProductItemSection} = [ProductItemSection()]
-    ref_entities::Dict{DbId,Union{PartnerSection,ContractSection,TariffSection}} = Dict{DbId,Union{PartnerSection,ContractSection,TariffSection}}()
 end
 
 """
@@ -239,7 +238,6 @@ function csection(contract_id::Integer, tsdb_validfrom, tsworld_validfrom, activ
                 end))
             end,
             product_items=pisection(history_id, version_id, tsdb_validfrom, tsworld_validfrom),
-            ref_entities=Dict{DbId,Union{PartnerSection,ContractSection,TariffSection}}(),
         )
     end
 end

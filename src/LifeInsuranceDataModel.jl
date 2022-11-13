@@ -243,30 +243,30 @@ function csection(contract_id::Integer, tsdb_validfrom, tsworld_validfrom, activ
 end
 
 """
-psection(partner_id::Integer, tsdb_validfrom, tsworld_validfrom)::PartnerSection
+psection(partner_id::Integer, tsdb_validfrom, tsworld_validfrom, activeTransaction::Integer=0)::PartnerSection
 
 	psection retrieves a section of a partner  or throws NoVersionFound
 
 """
-function psection(partner_id::Integer, tsdb_validfrom, tsworld_validfrom)::PartnerSection
+function psection(partner_id::Integer, tsdb_validfrom, tsworld_validfrom, activeTransaction::Integer=0)::PartnerSection
     connect()
     history_id = find(Partner, SQLWhereExpression("id=?", DbId(partner_id)))[1].ref_history
-    version_id = findversion(history_id, tsdb_validfrom, tsworld_validfrom).value
+    version_id = findversion(history_id, tsdb_validfrom, tsworld_validfrom, activeTransaction == 1 ? 0 : 1).value
     let pr = get_revision(Partner, PartnerRevision, DbId(history_id), DbId(version_id))
         PartnerSection(revision=pr)
     end
 end
 
 """
-tsection(tariff_id::Integer, tsdb_validfrom, tsworld_validfrom)::TariffSection
+tsection(tariff_id::Integer, tsdb_validfrom, tsworld_validfrom, activeTransaction::Integer=0)::TariffSection
 
 	tsection retrieves a section of a tariff or throws NoVersionFound
 
 """
-function tsection(tariff_id::Integer, tsdb_validfrom, tsworld_validfrom)::TariffSection
+function tsection(tariff_id::Integer, tsdb_validfrom, tsworld_validfrom, activeTransaction::Integer=0)::TariffSection
     connect()
     history_id = find(Tariff, SQLWhereExpression("id=?", DbId(tariff_id)))[1].ref_history
-    version_id = findversion(DbId(history_id), tsdb_validfrom, tsworld_validfrom).value
+    version_id = findversion(DbId(history_id), tsdb_validfrom, tsworld_validfrom, activeTransaction == 1 ? 0 : 1).value
     let tr = get_revision(Tariff, TariffRevision, DbId(history_id), DbId(version_id))
         TariffSection(revision=tr)
     end

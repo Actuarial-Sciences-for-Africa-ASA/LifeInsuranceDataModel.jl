@@ -273,15 +273,15 @@ function tsection(tariff_id::Integer, tsdb_validfrom, tsworld_validfrom, activeT
 end
 
 """
-prsection(product_id::Integer, tsdb_validfrom, tsworld_validfrom)::ProductSection
+prsection(product_id::Integer, tsdb_validfrom, tsworld_validfrom, activeTransaction::Integer=0)::ProductSection
 
 	prsection retrieves a section of a product or throws NoVersionFound
 
 """
-function prsection(product_id::Integer, tsdb_validfrom, tsworld_validfrom)::ProductSection
+function prsection(product_id::Integer, tsdb_validfrom, tsworld_validfrom, activeTransaction::Integer=0)::ProductSection
     connect()
     history_id = find(Product, SQLWhereExpression("id=?", DbId(product_id)))[1].ref_history
-    version_id = findversion(DbId(history_id), tsdb_validfrom, tsworld_validfrom).value
+    version_id = findversion(DbId(history_id), tsdb_validfrom, tsworld_validfrom, activeTransaction == 1 ? 0 : 1).value
     let pr = get_revision(Product, ProductRevision, DbId(history_id), DbId(version_id))
         ProductSection(revision=pr, parts=let pts = find(ProductPart, SQLWhereExpression("ref_history = BIGINT ? ", DbId(history_id)))
             collect(Iterators.flatten(map(pts) do pt

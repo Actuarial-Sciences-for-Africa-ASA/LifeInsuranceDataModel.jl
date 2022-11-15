@@ -323,6 +323,17 @@ function get_partners()
     find(Partner)
 end
 
+
+"""
+get_products
+	get_products retrieves all product entities - search capabilities to be added 
+"""
+function get_products()
+    connect()
+    find(Product)
+end
+
+
 """
 connect0
 internal function for DB connect

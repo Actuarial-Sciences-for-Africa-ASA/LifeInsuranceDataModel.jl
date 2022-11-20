@@ -15,6 +15,7 @@ export Contract,
     ContractRevision,
     ContractPartnerRole,
     ContractPartnerRef,
+    ContractPartnerReference,
     ContractPartnerRefRevision,
     csection,
     disconnect,
@@ -118,7 +119,7 @@ TariffItemSection is a section (see above) of a TariffItem component
 """
 @kwdef mutable struct TariffItemSection
     tariff_ref::TariffItemTariffReference = TariffItemTariffReference()
-    partner_refs::Vector{TariffItemPartnerReference} = [TariffItemPartnerReference()]
+    partner_refs::Vector{TariffItemPartnerReference} = []
 end
 
 """
@@ -126,7 +127,7 @@ ProductItemSection is a section (see above) of a ProductItem component
 """
 @kwdef mutable struct ProductItemSection
     revision::ProductItemRevision = ProductItemRevision(position=0)
-    tariff_items::Vector{TariffItemSection} = [TariffItemSection]
+    tariff_items::Vector{TariffItemSection} = []
 end
 
 """
@@ -134,11 +135,11 @@ ContractPartnerReference
 	holds attributes of the reference from contract and a partner section
 """
 @kwdef mutable struct ContractPartnerReference
-    rev::ContractPartnerRefRevision = TariffItemContractPartnerRefRevision()
+    rev::ContractPartnerRefRevision = ContractPartnerRefRevision()
     ref::PartnerSection = PartnerSection()
 end
 
-"""
+""" 
 ContractSection
 	ContractSection is a section (see above) of a contract entity
 """
@@ -148,8 +149,8 @@ ContractSection
     ref_history::SearchLight.DbId = DbId(InfinityKey)
     ref_version::SearchLight.DbId = MaxVersion
     revision::ContractRevision = ContractRevision()
-    partner_refs::Vector{ContractPartnerReference} = [ContractPartnerReference]
-    product_items::Vector{ProductItemSection} = [ProductItemSection()]
+    partner_refs::Vector{ContractPartnerReference} = []
+    product_items::Vector{ProductItemSection} = []
 end
 
 """

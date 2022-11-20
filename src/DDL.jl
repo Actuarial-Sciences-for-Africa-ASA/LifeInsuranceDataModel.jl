@@ -176,7 +176,6 @@ function up()
                 "REFERENCES productitems(id) ON DELETE CASCADE",
             )
             column(:ref_product, :bigint, "REFERENCES products(id) ON DELETE CASCADE")
-            column(:position, :bigint)
             column(:ref_validfrom, :bigint, "REFERENCES versions(id) ON DELETE CASCADE")
             column(:ref_invalidfrom, :bigint, "DEFAULT 2^53 - 1 REFERENCES versions(id) ON DELETE SET DEFAULT")
             column(:ref_valid, :int8range)

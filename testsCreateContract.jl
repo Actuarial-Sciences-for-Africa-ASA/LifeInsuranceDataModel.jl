@@ -16,7 +16,7 @@ using JSON
 
 if (haskey(ENV, "GITPOD_REPO_ROOT"))
     run(```psql -f sqlsnippets/droptables.sql```)
-elseif (haskey(ENV,"GENIE_ENV") & (ENV["GENIE_ENV"]=="dev"))
+elseif (haskey(ENV, "GENIE_ENV") & (ENV["GENIE_ENV"] == "dev"))
     run(```psql -d postgres -f sqlsnippets/droptables.sql```)
 end
 # Loading the data model- Create tables, constraints etc. and load Roles
@@ -219,7 +219,6 @@ LifeInsuranceDataModel.load_model()
 
     cpi = ProductItem(ref_super=c.id)
     cpir = ProductItemRevision(
-        position=2,
         ref_product=LifeRiskTIODProduct,
         description="from contract creation",
     )
@@ -276,7 +275,6 @@ LifeInsuranceDataModel.load_model()
 
     cpi = ProductItem(ref_super=c.id)
     cpir = ProductItemRevision(
-        position=2,
         ref_product=LifeRiskTIODProduct,
         description="from contract 4th mutation",
     )

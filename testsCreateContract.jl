@@ -51,7 +51,7 @@ LifeInsuranceDataModel.load_model()
     p = LifeInsuranceDataModel.Partner()
     pr = LifeInsuranceDataModel.PartnerRevision(description="Partner 1")
     w = Workflow(type_of_entity="Partner",
-        tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"Africa/Porto-Novo"),
+        tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"UTC"),
     )
     create_entity!(w)
     create_component!(p, pr, w)
@@ -66,7 +66,7 @@ LifeInsuranceDataModel.load_model()
         tr = LifeInsuranceDataModel.TariffRevision(description=dsc, mortality_table=mt)
         w = Workflow(
             type_of_entity="Tariff",
-            tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"Africa/Porto-Novo"),
+            tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"UTC"),
         )
         create_entity!(w)
         create_component!(t, tr, w)
@@ -117,7 +117,7 @@ LifeInsuranceDataModel.load_model()
 
     w0 = Workflow(
         type_of_entity="Product",
-        tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"Africa/Porto-Novo"),
+        tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"UTC"),
     )
     create_entity!(w0)
     create_component!(p, pr, w0)
@@ -177,7 +177,7 @@ LifeInsuranceDataModel.load_model()
 
     w0 = Workflow(
         type_of_entity="Product",
-        tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"Africa/Porto-Novo"),
+        tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"UTC"),
     )
     create_entity!(w0)
     create_component!(p, pr, w0)
@@ -198,7 +198,7 @@ LifeInsuranceDataModel.load_model()
 
     w1 = Workflow(
         type_of_entity="Contract",
-        tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"Africa/Porto-Novo"),
+        tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"UTC"),
     )
 
     create_entity!(w1)
@@ -238,7 +238,7 @@ LifeInsuranceDataModel.load_model()
     w2 = Workflow(
         type_of_entity="Contract",
         ref_history=w1.ref_history,
-        tsw_validfrom=ZonedDateTime(2016, 5, 30, 21, 0, 1, 1, tz"Africa/Porto-Novo"),
+        tsw_validfrom=ZonedDateTime(2016, 5, 30, 21, 0, 1, 1, tz"UTC"),
     )
     update_entity!(w2)
     update_component!(cr, cr1, w2)
@@ -249,7 +249,7 @@ LifeInsuranceDataModel.load_model()
     w3 = Workflow(
         type_of_entity="Contract",
         ref_history=w2.ref_history,
-        tsw_validfrom=ZonedDateTime(2015, 5, 30, 21, 0, 1, 1, tz"Africa/Porto-Novo"),
+        tsw_validfrom=ZonedDateTime(2015, 5, 30, 21, 0, 1, 1, tz"UTC"),
     )
     update_entity!(w3)
     cr1 = findcomponentrevision(ContractRevision, c.id, w3.ref_version)[1]
@@ -263,7 +263,7 @@ LifeInsuranceDataModel.load_model()
     w4 = Workflow(
         type_of_entity="Contract",
         ref_history=w2.ref_history,
-        tsw_validfrom=ZonedDateTime(2018, 5, 30, 21, 0, 1, 1, tz"Africa/Porto-Novo"),
+        tsw_validfrom=ZonedDateTime(2018, 5, 30, 21, 0, 1, 1, tz"UTC"),
     )
     update_entity!(w4)
     cr3 = ContractRevision(ref_component=c.id, description="contract 1, 4th mutation")

@@ -7,7 +7,3 @@ tasks:
   - command: python3 -m http.server 8080 -d docs/build
   - command: gp preview $(gp url 8080)
   - command: julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate();include("testsCreateContract.jl"); include("testPendingMutations.jl")'
-
-vscode:
-  extensions:
-    - singularitti.vscode-julia-formatter

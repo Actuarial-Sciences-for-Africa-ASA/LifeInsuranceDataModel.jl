@@ -126,7 +126,7 @@ end
 ProductItemSection is a section (see above) of a ProductItem component
 """
 @kwdef mutable struct ProductItemSection
-    revision::ProductItemRevision = ProductItemRevision(position=0)
+    revision::ProductItemRevision = ProductItemRevision()
     tariff_items::Vector{TariffItemSection} = []
 end
 

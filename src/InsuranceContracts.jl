@@ -113,7 +113,7 @@ ContractPartnerRefRevision
 @kwdef mutable struct ContractPartnerRefRevision <: BitemporalPostgres.ComponentRevision
   id::DbId = DbId()
   ref_component::DbId = InfinityKey
-  ref_role::DbId = InfinityKey
+  ref_role::DbId = DbId()
   ref_validfrom::DbId = InfinityKey
   ref_invalidfrom::DbId = InfinityKey
   description::String = ""

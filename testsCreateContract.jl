@@ -293,3 +293,17 @@ LifeInsuranceDataModel.load_model()
     commit_workflow!(w4)
 
 end # testset create contract
+
+@testset "get_typeof methods" begin
+    t = ContractRevision
+    @test get_typeof_revision(get_typeof_component(t())()) == t
+    t = TariffItemRevision
+    @test get_typeof_revision(get_typeof_component(t())()) == t
+end
+
+@testset "get_typeof methods" begin
+    for t in [ContractRevision, ContractPartnerRefRevision, ProductItemRevision, TariffItemRevision, TariffItemPartnerRefRevision]
+
+        @test get_typeof_revision(get_typeof_component(t())()) == t
+    end
+end

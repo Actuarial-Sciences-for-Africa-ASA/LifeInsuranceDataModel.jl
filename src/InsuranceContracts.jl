@@ -3,7 +3,8 @@ import BitemporalPostgres
 import SearchLight: DbId, AbstractModel
 import Base: @kwdef
 
-export Contract, ContractRevision, ContractPartnerRole, ContractPartnerRef, ContractPartnerRefRevision, ProductItem, TariffItemRole, ProductItemRevision, TariffItem, TariffItemRevision, TariffItemPartnerRole, TariffItemPartnerRef, TariffItemPartnerRefRevision
+export Contract, ContractRevision, ContractPartnerRole, ContractPartnerRef, ContractPartnerRefRevision, ProductItem, TariffItemRole, ProductItemRevision,
+  TariffItem, TariffItemRevision, TariffItemPartnerRole, TariffItemPartnerRef, TariffItemPartnerRefRevision
 using BitemporalPostgres
 
 """
@@ -45,6 +46,19 @@ Base.copy(src::ContractRevision) = ContractRevision(
   ref_component=src.ref_component,
   description=src.description,
 )
+"""
+BitemporalPostgres.get_typeof_revision(component::Contract) :: Type{ContractRevision}
+"""
+function BitemporalPostgres.get_typeof_revision(component::Contract)::Type{ContractRevision}
+  ContractRevision
+end
+
+"""
+BitemporalPostgres.get_typeof_component(revision::ContractRevision) :: Type{Contract}
+"""
+function BitemporalPostgres.get_typeof_component(revision::ContractRevision)::Type{Contract}
+  Contract
+end
 
 """
 ProductItem
@@ -74,10 +88,37 @@ ProductItemRevision
   description::String = ""
 end
 
+"""
+BitemporalPostgres.get_typeof_revision(component::ProductItem) :: Type{ProductItemRevision}
+"""
+function BitemporalPostgres.get_typeof_revision(component::ProductItem)::Type{ProductItemRevision}
+  ProductItemRevision
+end
+
+"""
+BitemporalPostgres.get_typeof_component(revision::ProductItemRevision) :: Type{ProductItem}
+"""
+function BitemporalPostgres.get_typeof_component(revision::ProductItemRevision)::Type{ProductItem}
+  ProductItem
+end
+
 Base.copy(src::ProductItemRevision) = ProductItemRevision(
   ref_component=src.ref_component,
   description=src.description,)
 
+"""
+BitemporalPostgres.get_typeof_revision(component::ProductItem) :: Type{ProductItemRevision}
+"""
+function BitemporalPostgres.get_typeof_revision(component::ProductItem)::Type{ProductItemRevision}
+  ProductItemRevision
+end
+
+"""
+BitemporalPostgres.get_typeof_component(revision::ProductItemRevision) :: Type{ProductItem}
+"""
+function BitemporalPostgres.get_typeof_component(revision::ProductItemRevision)::Type{ProductItem}
+  ProductItem
+end
 
 """
 ContractPartnerRole
@@ -125,6 +166,19 @@ Base.copy(src::ContractPartnerRefRevision) = ContractPartnerRefRevision(
   description=src.description)
 
 """
+BitemporalPostgres.get_typeof_revision(component::ContractPartnerRef) :: Type{ContractPartnerRefRevision}
+"""
+function BitemporalPostgres.get_typeof_revision(component::ContractPartnerRef)::Type{ContractPartnerRefRevision}
+  ContractPartnerRefRevision
+end
+
+"""
+BitemporalPostgres.get_typeof_component(revision::ContractPartnerRefRevision) :: Type{ContractPartnerRef}
+"""
+function BitemporalPostgres.get_typeof_component(revision::ContractPartnerRefRevision)::Type{ContractPartnerRef}
+  ContractPartnerRef
+end
+"""
 TariffItemRole
 
   role e.g. main or supplemental risk like life and occupational disabilty
@@ -167,6 +221,19 @@ TariffItemRevision
   annuity_immediate::Float64 = 0.0
   deferment::Integer = 0
   annuity_due::Float64 = 0.0
+end
+"""
+BitemporalPostgres.get_typeof_revision(component::TariffItem) :: Type{TariffItemRevision}
+"""
+function BitemporalPostgres.get_typeof_revision(component::TariffItem)::Type{TariffItemRevision}
+  TariffItemRevision
+end
+
+"""
+BitemporalPostgres.get_typeof_component(revision::TariffItemRevision) :: Type{TariffItem}
+"""
+function BitemporalPostgres.get_typeof_component(revision::TariffItemRevision)::Type{TariffItem}
+  TariffItem
 end
 
 Base.copy(src::TariffItemRevision) = TariffItemRevision(
@@ -214,6 +281,19 @@ TariffItemPartnerRefRevision
   ref_partner::DbId = DbId()
 end
 
+"""
+BitemporalPostgres.get_typeof_revision(component::TariffItemPartnerRef) :: Type{TariffItemPartnerRefRevision}
+"""
+function BitemporalPostgres.get_typeof_revision(component::TariffItemPartnerRef)::Type{TariffItemPartnerRefRevision}
+  TariffItemPartnerRefRevision
+end
+
+"""
+BitemporalPostgres.get_typeof_component(revision::TariffItemPartnerRefRevision) :: Type{TariffItemPartnerRef}
+"""
+function BitemporalPostgres.get_typeof_component(revision::TariffItemPartnerRefRevision)::Type{TariffItemPartnerRef}
+  TariffItemPartnerRef
+end
 Base.copy(src::TariffItemPartnerRefRevision) = TariffItemPartnerRefRevision(
   ref_component=src.ref_component,
   description=src.description)

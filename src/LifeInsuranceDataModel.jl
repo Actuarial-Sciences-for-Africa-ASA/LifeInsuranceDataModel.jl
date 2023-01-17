@@ -41,7 +41,7 @@ using .InsuranceProducts
 include("InsuranceTariffs.jl")
 using .InsuranceTariffs
 
-export Product, ProductRevision, ProductPart, ProductPartRevision, ProductPartRole, Tariff, TariffRevision
+export Product, ProductRevision, ProductPart, ProductPartRevision, ProductPartRole, Tariff, TariffRevision, TariffPartnerRoleRevision
 export ContractSection, ProductItemSection, PartnerSection, TariffItemSection, TariffSection, csection, pisection, tsection, psection, load_model
 export ProductSection, ProductPartSection, prsection
 
@@ -70,6 +70,7 @@ is a section (see above) of a Tariff entity
     ref_history::SearchLight.DbId = DbId(InfinityKey)
     ref_version::SearchLight.DbId = MaxVersion
     revision::TariffRevision = TariffRevision()
+    partner_roles::Vector{TariffPartnerRoleRevision} = []
 end
 
 """
@@ -269,7 +270,8 @@ function tsection(tariff_id::Integer, tsdb_validfrom, tsworld_validfrom, activeT
     history_id = find(Tariff, SQLWhereExpression("id=?", DbId(tariff_id)))[1].ref_history
     version_id = findversion(DbId(history_id), tsdb_validfrom, tsworld_validfrom, activeTransaction == 1 ? 0 : 1).value
     let tr = get_revision(Tariff, TariffRevision, DbId(history_id), DbId(version_id))
-        TariffSection(revision=tr)
+        trpr = get_revisionIfAny(Tariff, TariffPartnerRoleRevision, DbId(history_id), DbId(version_id))
+        TariffSection(revision=tr, partner_roles=trpr)
     end
 end
 

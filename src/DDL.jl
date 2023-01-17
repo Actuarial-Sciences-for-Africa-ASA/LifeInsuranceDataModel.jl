@@ -74,10 +74,36 @@ function up()
         ]
     end
 
+
+    create_table(:TariffItemPartnerRoles) do
+        [
+            column(:id, :bigserial, "PRIMARY KEY")
+            column(:domain, :string)
+            column(:value, :string)
+        ]
+    end
+
+    create_table(:tariffPartnerRoleRevisions) do
+        [
+            column(:id, :bigserial, "PRIMARY KEY")
+            column(:ref_component, :bigint, "REFERENCES tariffs(id) ON DELETE CASCADE")
+            column(:ref_validfrom, :bigint, "REFERENCES versions(id) ON DELETE CASCADE")
+            column(:ref_invalidfrom, :bigint, "DEFAULT 2^53 - 1 REFERENCES versions(id) ON DELETE SET DEFAULT")
+            column(:ref_valid, :int8range)
+            column(:ref_role, :bigint, "REFERENCES tariffitempartnerroles(id) ON DELETE CASCADE")
+        ]
+    end
+
     createRevisionsTriggerAndConstraint(
         :tr_versions_trig,
         :tr_versionrange,
         :tariffRevisions,
+    )
+
+    createRevisionsTriggerAndConstraint(
+        :trpr_versions_trig,
+        :trpr_versionrange,
+        :tariffPartnerRoleRevisions,
     )
 
     create_table(:products) do
@@ -286,14 +312,6 @@ function up()
         :pitrr_versionrange,
         :TariffItemRevisions,
     )
-
-    create_table(:TariffItemPartnerRoles) do
-        [
-            column(:id, :bigserial, "PRIMARY KEY")
-            column(:domain, :string)
-            column(:value, :string)
-        ]
-    end
 
     create_table(:TariffItemPartnerRefs) do
         [

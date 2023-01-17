@@ -1,7 +1,7 @@
 name = "LifeInsuranceDataModel"
 uuid = "4892898e-25d7-46ce-b5c3-dea2164303ac"
 authors = ["Michael Fliegner <michael.fliegner@hamburg.de>"]
-version = "0.6.3"
+version = "0.6.4"
 
 [deps]
 BitemporalPostgres = "e513cd14-23e6-48df-acf1-d9bc8fa5674b"

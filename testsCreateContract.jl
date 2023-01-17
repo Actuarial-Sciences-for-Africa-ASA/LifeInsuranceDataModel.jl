@@ -61,15 +61,17 @@ LifeInsuranceDataModel.load_model()
     # Create tariffs
 
     # create Tariffs
-    function create_tariff(dsc, mt)
+    function create_tariff(dsc, mt, insuredperson="Insured Person", insuredperson2="")
         t = LifeInsuranceDataModel.Tariff()
         tr = LifeInsuranceDataModel.TariffRevision(description=dsc, mortality_table=mt)
+        trpr = LifeInsuranceDataModel.TariffPartnerRoleRevision(ref_role=tiprRole[insuredperson])
         w = Workflow(
             type_of_entity="Tariff",
             tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"UTC"),
         )
         create_entity!(w)
         create_component!(t, tr, w)
+        create_component!(t, trpr, w)
         commit_workflow!(w)
         t.id.value
     end

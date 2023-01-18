@@ -4,7 +4,7 @@ import SearchLight: DbId, AbstractModel
 import Base: @kwdef
 
 export Contract, ContractRevision, ContractPartnerRole, ContractPartnerRef, ContractPartnerRefRevision, ProductItem, TariffItemRole, ProductItemRevision,
-  TariffItem, TariffItemRevision, TariffItemPartnerRole, TariffItemPartnerRef, TariffItemPartnerRefRevision
+  TariffItem, TariffItemRevision, TariffItemPartnerRole, TariffItemPartnerRef, TariffItemPartnerReference, TariffItemPartnerRefRevision
 using BitemporalPostgres
 
 """

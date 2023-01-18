@@ -106,19 +106,19 @@ Base.copy(src::ProductItemRevision) = ProductItemRevision(
   ref_component=src.ref_component,
   description=src.description,)
 
-"""
-BitemporalPostgres.get_typeof_revision(component::ProductItem) :: Type{ProductItemRevision}
-"""
-function BitemporalPostgres.get_typeof_revision(component::ProductItem)::Type{ProductItemRevision}
-  ProductItemRevision
-end
-
-"""
-BitemporalPostgres.get_typeof_component(revision::ProductItemRevision) :: Type{ProductItem}
-"""
-function BitemporalPostgres.get_typeof_component(revision::ProductItemRevision)::Type{ProductItem}
-  ProductItem
-end
+# 
+# emporalPostgres.get_typeof_revision(component::ProductItem) :: Type{ProductItemRevision}
+# 
+# ction BitemporalPostgres.get_typeof_revision(component::ProductItem)::Type{ProductItemRevision}
+# roductItemRevision
+# 
+# 
+# 
+# emporalPostgres.get_typeof_component(revision::ProductItemRevision) :: Type{ProductItem}
+# 
+# ction BitemporalPostgres.get_typeof_component(revision::ProductItemRevision)::Type{ProductItem}
+# roductItem
+# 
 
 """
 ContractPartnerRole

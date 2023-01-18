@@ -16,3 +16,5 @@ ts = map(prs.parts) do pt
         TariffItemSection(tariff_ref=titr, partner_refs=tiprs)
     end
 end
+pir = ProductItemRevision(ref_product=prs.revision.ref_component)
+ProductItemSection(revision=pir, tariff_items=ts)

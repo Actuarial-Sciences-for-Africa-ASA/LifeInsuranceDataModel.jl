@@ -58,23 +58,7 @@ LifeInsuranceDataModel.load_model()
     commit_workflow!(w)
 
     Partner1 = p.id.value
-    # Create tariffs
 
-    # create Tariffs
-    function create_tariff(dsc, mt, insuredperson="Insured Person", insuredperson2="")
-        t = LifeInsuranceDataModel.Tariff()
-        tr = LifeInsuranceDataModel.TariffRevision(description=dsc, mortality_table=mt)
-        trpr = LifeInsuranceDataModel.TariffPartnerRoleRevision(ref_role=tiprRole[insuredperson])
-        w = Workflow(
-            type_of_entity="Tariff",
-            tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"UTC"),
-        )
-        create_entity!(w)
-        create_component!(t, tr, w)
-        create_component!(t, trpr, w)
-        commit_workflow!(w)
-        t.id.value
-    end
 
     LifeRiskTariff = create_tariff("Life Risk Insurance", "1980 CET - Male Nonsmoker, ANB")
     TerminalIllnessTariff = create_tariff(
@@ -92,6 +76,7 @@ LifeInsuranceDataModel.load_model()
     LifeRiskTariff2 = create_tariff(
         "Life Risk Insurance",
         "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB",
+        "Insured Person", "2nd Insured Person",
     )
 
     find(TariffRevision)
@@ -309,3 +294,58 @@ end
         @test get_typeof_revision(get_typeof_component(t())()) == t
     end
 end
+
+
+
+using BitemporalPostgres, SearchLight
+history = 9
+txntime = MaxDate
+
+res = SearchLight.query(
+    "select s.tsdb_invalidfrom as sdbinv, m.tsdb_validfrom as mdbval, 
+m.tsworld_validfrom as mwval, s.tsworld_validfrom as swval,m.tsworld_invalidfrom as mwinv,s.tsworld_invalidfrom as swinv, 
+m.id as mid, s.id as sid , m.ref_history as mh , m.ref_version as mv , s.ref_version as sv
+from validityintervals m join validityintervals s 
+on m.ref_history=s.ref_history
+and m.ref_version != s.ref_version
+and m.tsdb_validfrom = s.tsdb_invalidfrom
+and m.tsworld_validfrom <= s.tsworld_validfrom 
+--and tstzrange(m.tsworld_validfrom, m.tsworld_invalidfrom) @> s.tsworld_validfrom -- tstzrange(s.tsworld_validfrom,s.tsworld_invalidfrom)
+where m.ref_history=$history
+and m.tsdb_invalidfrom = TIMESTAMPTZ '$txntime'",
+)
+
+println(res)
+
+txns = SearchLight.query("select tsdb_validfrom as vf from validityintervals union
+                         select tsdb_invalidfrom as vf from validityintervals 
+                         group by vf order by vf")
+
+refs = SearchLight.query("select tsworld_validfrom as vf from validityintervals union
+                         select tsworld_invalidfrom as vf from validityintervals 
+                         group by vf order by vf")
+
+println(txns)
+
+println(refs)
+
+txnDict = Dict()
+for i = 1:first(size(txns))
+    txnDict[txns[i, 1]] = i
+end
+
+
+refDict = Dict()
+for i = 1:first(size(refs))
+    refDict[refs[i, 1]] = i
+end
+
+println(txnDict)
+
+println(refDict)
+
+using BitemporalPostgres
+valints = find(ValidityInterval)
+
+
+vi = valints[1]

@@ -43,7 +43,8 @@ using .InsuranceProducts
 include("InsuranceTariffs.jl")
 using .InsuranceTariffs
 
-export Product, ProductRevision, ProductPart, ProductPartRevision, ProductPartRole, Tariff, TariffRevision, TariffPartnerRoleRevision
+export Product, ProductRevision, ProductPart, ProductPartRevision, ProductPartRole, Tariff, TariffRevision, TariffPartnerRole, TariffPartnerRoleRevision,
+    create_tariff
 export ContractSection, ProductItemSection, PartnerSection, TariffItemSection, TariffSection, csection, pisection, tsection, psection, load_model
 export ProductSection, ProductPartSection, prsection
 
@@ -338,6 +339,39 @@ function get_products()
     find(Product)
 end
 
+"""
+create_tariff(dsc, mt, insuredperson="Insured Person", insuredperson2="")
+
+  create a tariff
+"""
+
+function create_tariff(dsc, mt, insuredperson="Insured Person", insuredperson2="")
+    tiprRole = Dict{String,Integer}()
+    map(find(TariffItemPartnerRole)) do entry
+        tiprRole[entry.value] = entry.id.value
+    end
+    t = LifeInsuranceDataModel.Tariff()
+    tr = LifeInsuranceDataModel.TariffRevision(description=dsc, mortality_table=mt)
+    tpr = LifeInsuranceDataModel.TariffPartnerRole()
+    tprr = LifeInsuranceDataModel.TariffPartnerRoleRevision(ref_role=tiprRole[insuredperson])
+    if !isempty(insuredperson2)
+        tpr2 = LifeInsuranceDataModel.TariffPartnerRole()
+        tprr2 = LifeInsuranceDataModel.TariffPartnerRoleRevision(ref_role=tiprRole[insuredperson2])
+    end
+    w = Workflow(
+        type_of_entity="Tariff",
+        tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"UTC"),
+    )
+    create_entity!(w)
+    create_component!(t, tr, w)
+    create_subcomponent!(t, tpr, tprr, w)
+
+    if !isempty(insuredperson2)
+        create_subcomponent!(t, tpr2, tprr2, w)
+    end
+    commit_workflow!(w)
+    t.id.value
+end
 
 """
 connect0

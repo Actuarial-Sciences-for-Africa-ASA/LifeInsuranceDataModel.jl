@@ -1,20 +1,31 @@
 using Revise, LifeInsuranceDataModel, TimeZones, SearchLight
-prrolemap = Dict(1 => 1, 2 => 1)
-partners = Dict{Integer,Any}()
-for key in keys(prrolemap)
-    partners[key] = psection(prrolemap[key], now(tz"UTC"), now(tz"UTC"))
-end
 
 prs = prsection(1, now(tz"UTC"), now(tz"UTC"))
-ts = map(prs.parts) do pt
-    let tiprs = map(pt.ref.partner_roles) do r
-            TariffItemPartnerReference(rev=TariffItemPartnerRefRevision(ref_role=r.ref_role.value),
-                ref=partners[1])
-        end
-        tir = TariffItemRevision(ref_role=pt.revision.ref_role, ref_tariff=pt.revision.ref_tariff)
-        titr = TariffItemTariffReference(ref=pt.ref, rev=tir)
-        TariffItemSection(tariff_ref=titr, partner_refs=tiprs)
-    end
+pidrolemap = Dict(1 => 1, 2 => 1)
+partnerrolemap::Dict{Integer,PartnerSection} = Dict()
+for key in keys(pidrolemap)
+    partnerrolemap[key] = psection(pidrolemap[key], now(tz"UTC"), now(tz"UTC"))
 end
-pir = ProductItemRevision(ref_product=prs.revision.ref_component)
-ProductItemSection(revision=pir, tariff_items=ts)
+roles = Set{Integer}();
+map(prs.parts) do pt
+    for r in pt.ref.partner_roles
+        push!(roles, r.ref_role.value)
+    end
+
+end;
+function instantiate_product(prs::ProductSection, partnerrolemap::Dict{Integer,PartnerSection})
+    ts = map(prs.parts) do pt
+        let tiprs = map(pt.ref.partner_roles) do r
+                TariffItemPartnerReference(rev=TariffItemPartnerRefRevision(ref_role=r.ref_role.value),
+                    ref=partnerrolemap[r.ref_role.value])
+            end
+            tir = TariffItemRevision(ref_role=pt.revision.ref_role, ref_tariff=pt.revision.ref_tariff)
+            titr = TariffItemTariffReference(ref=pt.ref, rev=tir)
+            TariffItemSection(tariff_ref=titr, partner_refs=tiprs)
+        end
+    end
+    pir = ProductItemRevision(ref_product=prs.revision.ref_component)
+    ProductItemSection(revision=pir, tariff_items=ts)
+end
+
+instantiate_product(prs, partnerrolemap)

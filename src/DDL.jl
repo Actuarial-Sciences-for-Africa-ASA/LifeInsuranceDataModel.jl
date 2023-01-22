@@ -29,6 +29,40 @@ end
 
 function up()
     BitemporalPostgres.up()
+
+    create_table(:contractPartnerRoles) do
+        [
+            column(:id, :bigserial, "PRIMARY KEY")
+            column(:domain, :string)
+            column(:value, :string)
+        ]
+    end
+
+    create_table(:tariffItemPartnerRoles) do
+        [
+            column(:id, :bigserial, "PRIMARY KEY")
+            column(:domain, :string)
+            column(:value, :string)
+        ]
+    end
+
+    create_table(:TariffItemRoles) do
+        [
+            column(:id, :bigserial, "PRIMARY KEY")
+            column(:domain, :string)
+            column(:value, :string)
+        ]
+    end
+
+    create_table(:ProductPartRoles) do
+        [
+            column(:id, :bigserial, "PRIMARY KEY")
+            column(:domain, :string)
+            column(:value, :string)
+        ]
+    end
+
+
     create_table(:contracts) do
         [
             column(:id, :bigserial, "PRIMARY KEY")
@@ -74,19 +108,19 @@ function up()
         ]
     end
 
-
-    create_table(:TariffItemPartnerRoles) do
+    create_table(:tariffPartnerRoles) do
         [
             column(:id, :bigserial, "PRIMARY KEY")
-            column(:domain, :string)
-            column(:value, :string)
+            column(:ref_history, :bigint, "REFERENCES histories(id) ON DELETE CASCADE")
+            column(:ref_version, :bigint, "REFERENCES versions(id) ON DELETE CASCADE")
+            column(:ref_super, :bigint, "REFERENCES tariffs(id) ON DELETE CASCADE")
         ]
     end
 
     create_table(:tariffPartnerRoleRevisions) do
         [
             column(:id, :bigserial, "PRIMARY KEY")
-            column(:ref_component, :bigint, "REFERENCES tariffs(id) ON DELETE CASCADE")
+            column(:ref_component, :bigint, "REFERENCES tariffPartnerRoles(id) ON DELETE CASCADE")
             column(:ref_validfrom, :bigint, "REFERENCES versions(id) ON DELETE CASCADE")
             column(:ref_invalidfrom, :bigint, "DEFAULT 2^53 - 1 REFERENCES versions(id) ON DELETE SET DEFAULT")
             column(:ref_valid, :int8range)
@@ -134,22 +168,6 @@ function up()
         :p_versionrange,
         :productRevisions,
     )
-
-    create_table(:TarifFItemRoles) do
-        [
-            column(:id, :bigserial, "PRIMARY KEY")
-            column(:domain, :string)
-            column(:value, :string)
-        ]
-    end
-
-    create_table(:ProductPartRoles) do
-        [
-            column(:id, :bigserial, "PRIMARY KEY")
-            column(:domain, :string)
-            column(:value, :string)
-        ]
-    end
 
     create_table(:productParts) do
         [
@@ -239,15 +257,6 @@ function up()
         :pr_versionrange,
         :partnerRevisions,
     )
-
-    create_table(:contractPartnerRoles) do
-        [
-            column(:id, :bigserial, "PRIMARY KEY")
-            column(:domain, :string)
-            column(:value, :string)
-        ]
-    end
-
 
     create_table(:contractPartnerRefs) do
         [

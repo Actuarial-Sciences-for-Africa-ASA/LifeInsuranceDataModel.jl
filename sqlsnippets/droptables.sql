@@ -17,6 +17,7 @@ drop table productrevisions;
 drop table productpartroles;
 drop table products;
 drop table tariffpartnerrolerevisions;
+drop table tariffpartnerroles;
 drop table tariffitempartnerroles;
 drop table tariffrevisions;
 drop table tariffs;

@@ -59,6 +59,17 @@ LifeInsuranceDataModel.load_model()
 
     Partner1 = p.id.value
 
+    p = LifeInsuranceDataModel.Partner()
+    pr = LifeInsuranceDataModel.PartnerRevision(description="Partner 2")
+    w = Workflow(type_of_entity="Partner",
+        tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"UTC"),
+    )
+    create_entity!(w)
+    create_component!(p, pr, w)
+    commit_workflow!(w)
+
+    Partner2 = p.id.value
+
 
     LifeRiskTariff = create_tariff("Life Risk Insurance", "1980 CET - Male Nonsmoker, ANB")
     TerminalIllnessTariff = create_tariff(
@@ -74,10 +85,8 @@ LifeInsuranceDataModel.load_model()
         "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB",
     )
     LifeRiskTariff2 = create_tariff(
-        "Life Risk Insurance",
-        "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB",
-        "Insured Person", "2nd Insured Person",
-    )
+        "Two Life Risk Insurance",
+        "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB", [1, 2])
 
     find(TariffRevision)
     find(Tariff, SQLWhereExpression("id=?", ProfitParticipationTariff))
@@ -114,6 +123,37 @@ LifeInsuranceDataModel.load_model()
 
     LifeRiskProduct = p.id.value
     println(LifeRiskProduct)
+
+    p = Product()
+    pr = ProductRevision(description="Two Life Risk")
+
+    pp = ProductPart()
+    ppr = ProductPartRevision(
+        ref_tariff=LifeRiskTariff2,
+        ref_role=ppRole["Main Coverage - Life"],
+        description="Main Coverage - Two Life",
+    )
+
+    pp2 = ProductPart()
+    ppr2 = ProductPartRevision(
+        ref_tariff=ProfitParticipationTariff,
+        ref_role=ppRole["Profit participation"],
+        description="Profit participation Two Life Risk",
+    )
+
+    w0 = Workflow(
+        type_of_entity="Product",
+        tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"UTC"),
+    )
+    create_entity!(w0)
+    create_component!(p, pr, w0)
+    create_subcomponent!(p, pp, ppr, w0)
+    create_subcomponent!(p, pp2, ppr2, w0)
+    commit_workflow!(w0)
+
+    TwoLifeRiskProduct = p.id.value
+    println(TwoLifeRiskProduct)
+
 
     p = Product()
     pr = ProductRevision(description="Life Risk - Terminal Illness")

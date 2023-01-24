@@ -273,7 +273,9 @@ function tsection(tariff_id::Integer, tsdb_validfrom, tsworld_validfrom, activeT
     history_id = find(Tariff, SQLWhereExpression("id=?", DbId(tariff_id)))[1].ref_history
     version_id = findversion(DbId(history_id), tsdb_validfrom, tsworld_validfrom, activeTransaction == 1 ? 0 : 1).value
     let tr = get_revision(Tariff, TariffRevision, DbId(history_id), DbId(version_id))
-        trpr = get_revisionIfAny(Tariff, TariffPartnerRoleRevision, DbId(history_id), DbId(version_id))
+        trpr = collect(Iterators.flatten(map(find(TariffPartnerRole, SQLWhereExpression("ref_super=?", tr.ref_component))) do tpr
+            get_revisionIfAny(TariffPartnerRoleRevision, DbId(tpr.id), DbId(version_id))
+        end))
         TariffSection(revision=tr, partner_roles=trpr)
     end
 end
@@ -340,34 +342,27 @@ function get_products()
 end
 
 """
-create_tariff(dsc, mt, insuredperson="Insured Person", insuredperson2="")
+create_tariff(dsc::String, mt::String, tariffpartnerroles::Vector{Int}=[1])
 
-  create a tariff
+  create a tariff, default partnerrole 1 : "Insured Person"
 """
 
-function create_tariff(dsc, mt, insuredperson="Insured Person", insuredperson2="")
-    tiprRole = Dict{String,Integer}()
-    map(find(TariffItemPartnerRole)) do entry
-        tiprRole[entry.value] = entry.id.value
-    end
+function create_tariff(dsc::String, mt::String, tariffpartnerroles::Vector{Int}=[1])
+
     t = LifeInsuranceDataModel.Tariff()
     tr = LifeInsuranceDataModel.TariffRevision(description=dsc, mortality_table=mt)
-    tpr = LifeInsuranceDataModel.TariffPartnerRole()
-    tprr = LifeInsuranceDataModel.TariffPartnerRoleRevision(ref_role=tiprRole[insuredperson])
-    if !isempty(insuredperson2)
-        tpr2 = LifeInsuranceDataModel.TariffPartnerRole()
-        tprr2 = LifeInsuranceDataModel.TariffPartnerRoleRevision(ref_role=tiprRole[insuredperson2])
-    end
     w = Workflow(
         type_of_entity="Tariff",
         tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"UTC"),
     )
     create_entity!(w)
     create_component!(t, tr, w)
-    create_subcomponent!(t, tpr, tprr, w)
-
-    if !isempty(insuredperson2)
-        create_subcomponent!(t, tpr2, tprr2, w)
+    for role in tariffpartnerroles
+        let
+            tpr = LifeInsuranceDataModel.TariffPartnerRole()
+            tprr = LifeInsuranceDataModel.TariffPartnerRoleRevision(ref_role=role)
+            create_subcomponent!(t, tpr, tprr, w)
+        end
     end
     commit_workflow!(w)
     t.id.value

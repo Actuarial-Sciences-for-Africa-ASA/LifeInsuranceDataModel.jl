@@ -1,18 +1,12 @@
 using Revise, LifeInsuranceDataModel, TimeZones, SearchLight
 
-prs = prsection(1, now(tz"UTC"), now(tz"UTC"))
-pidrolemap = Dict(1 => 1, 2 => 1)
+prs = prsection(2, now(tz"UTC"), now(tz"UTC"))
+pidrolemap = Dict(1 => 1, 2 => 2)
 partnerrolemap::Dict{Integer,PartnerSection} = Dict()
 for key in keys(pidrolemap)
     partnerrolemap[key] = psection(pidrolemap[key], now(tz"UTC"), now(tz"UTC"))
 end
-roles = Set{Integer}();
-map(prs.parts) do pt
-    for r in pt.ref.partner_roles
-        push!(roles, r.ref_role.value)
-    end
 
-end;
 function instantiate_product(prs::ProductSection, partnerrolemap::Dict{Integer,PartnerSection})
     ts = map(prs.parts) do pt
         let tiprs = map(pt.ref.partner_roles) do r
@@ -28,4 +22,4 @@ function instantiate_product(prs::ProductSection, partnerrolemap::Dict{Integer,P
     ProductItemSection(revision=pir, tariff_items=ts)
 end
 
-instantiate_product(prs, partnerrolemap)
+instpr = instantiate_product(prs, partnerrolemap)

@@ -1,12 +1,13 @@
 name = "LifeInsuranceDataModel"
 uuid = "4892898e-25d7-46ce-b5c3-dea2164303ac"
 authors = ["Michael Fliegner <michael.fliegner@hamburg.de>"]
-version = "0.6.7"
+version = "0.6.8"
 
 [deps]
 BitemporalPostgres = "e513cd14-23e6-48df-acf1-d9bc8fa5674b"
 ColorSchemes = "35d6a980-a343-548e-a6ea-1d62b119f2f4"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 Intervals = "d8418881-c3e1-53bb-8760-2df7ec849ed5"
 JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
@@ -20,7 +21,7 @@ TimeZones = "f269a46b-ccf7-5d73-abea-4c690281aa53"
 ToStruct = "43ec2cc1-0e50-5406-a854-b7ff8fdb8dad"
 
 [compat]
-BitemporalPostgres = "1.6.1"
+BitemporalPostgres = "1.6.2"
 ColorSchemes = "3"
 DataFrames = "1"
 Intervals = "1.6.0"

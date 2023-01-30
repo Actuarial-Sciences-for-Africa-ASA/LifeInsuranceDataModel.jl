@@ -11,7 +11,9 @@ include("DDL.jl")
 using .DDL
 include("InsuranceContracts.jl")
 using .InsuranceContracts
-export Contract,
+export compareModelStateContract,
+    compareRevisions,
+    Contract,
     ContractRevision,
     ContractPartnerRole,
     ContractPartnerRef,
@@ -20,6 +22,7 @@ export Contract,
     csection,
     disconnect, get_typeof_component, get_typeof_revision,
     history_forest,
+    instantiate_product,
     psection,
     ProductItem,
     ProductItemRevision,
@@ -163,7 +166,10 @@ create_product_instance(wf::Workflow; pi::ProductItem, p::Integer, refp1::Intege
 	creates tariff items of a productitem pi corresponding to
 	the product parts of a Product p referencing the respective tariffs
 	and Partner refp1 in role prole1
+    expects a persisted productitem 
+    yields persisted tariff items
 """
+
 function create_product_instance(wf::Workflow, pi::ProductItem, p::Integer, refp1::Integer, prole1::Integer)
     map(find(ProductPart, SQLWhereExpression("ref_super=?", p))) do pp
         println(pp.id.value)
@@ -367,6 +373,135 @@ function create_tariff(dsc::String, mt::String, tariffpartnerroles::Vector{Int}=
     commit_workflow!(w)
     t.id.value
 end
+
+
+"""
+MVVM functions, creation of product items, comparison and persisting of model states
+"""
+
+"""
+instantiate_product(prs::ProductSection, prrolemap::Dict{Integer,Integer})::ProductItemSection
+
+  derive a product item from a product id and a map from role ids to partner ids
+  interpreting product data 
+  yields a transient ProductItemSection
+
+"""
+
+function instantiate_product(prs::ProductSection, partnerrolemap::Dict{Integer,PartnerSection})
+    ts = map(prs.parts) do pt
+        let tiprs = map(pt.ref.partner_roles) do r
+                TariffItemPartnerReference(rev=TariffItemPartnerRefRevision(ref_role=r.ref_role.value),
+                    ref=partnerrolemap[r.ref_role.value])
+            end
+            tir = TariffItemRevision(ref_role=pt.revision.ref_role, ref_tariff=pt.revision.ref_tariff)
+            titr = TariffItemTariffReference(ref=pt.ref, rev=tir)
+            TariffItemSection(tariff_ref=titr, partner_refs=tiprs)
+        end
+    end
+    pir = ProductItemRevision(ref_product=prs.revision.ref_component)
+    ProductItemSection(revision=pir, tariff_items=ts)
+end
+"""
+compareRevisions(t, previous::Dict{String,Any}, current::Dict{String,Any}) where {T<:BitemporalPostgres.ComponentRevision}
+compare corresponding revision elements and return nothing if equal a pair of both else
+"""
+function compareRevisions(t, previous::Dict{String,Any}, current::Dict{String,Any})
+    let changed = false
+        for (key, previous_value) in previous
+            if !(key in ("ref_validfrom", "ref_invalidfrom", "ref_component"))
+                let current_value = current[key]
+                    if previous_value != current_value
+                        changed = true
+                    end
+                end
+            end
+        end
+        if (changed)
+            (ToStruct.tostruct(t, previous), ToStruct.tostruct(t, current))
+        end
+    end
+end
+
+"""
+compareModelStateContract(previous::Dict{String,Any}, current::Dict{String,Any}, w::Workflow)
+	compare viewmodel state for a contract section
+"""
+function compareModelStateContract(previous::Dict{String,Any}, current::Dict{String,Any}, w::Workflow)
+    diff = []
+    @show current["revision"]
+    @show previous
+    cr = compareRevisions(ContractRevision, previous["revision"], current["revision"])
+    if (!isnothing(cr))
+        push!(diff, cr)
+    end
+    @info "comparing Partner_refs"
+    for i in 1:length(current["partner_refs"])
+        @show current["partner_refs"]
+        curr = current["partner_refs"][i]["rev"]
+        @info "current pref rev"
+        @show curr
+        if isnothing(curr["id"]["value"])
+            @info ("INSERT" * string(i))
+            push!(diff, (nothing, ToStruct.tostruct(ContractPartnerRefRevision, curr)))
+        else
+            prev = previous["partner_refs"][i]["rev"]
+            if curr["ref_invalidfrom"]["value"] == w.ref_version
+                @info ("DELETE" * string(i))
+                push!(diff, (ToStruct.tostruct(ContractPartnerRefRevision, prev), ToStruct.tostruct(ContractPartnerRefRevision, curr)))
+                @info "DIFF="
+                @show diff
+            else
+                @info ("UPDATE" * string(i))
+                cprr = compareRevisions(ContractPartnerRefRevision, prev, curr)
+                if (!isnothing(cprr))
+                    push!(diff, cprr)
+                end
+            end
+        end
+    end
+    @info "comparing product items"
+    for i in 1:length(current["product_items"])
+        @show current["product_items"]
+        curr = current["product_items"][i]["revision"]
+        @info "current pref rev"
+        @show curr
+        if isnothing(curr["id"]["value"])
+            @info ("INSERT" * string(i))
+            push!(diff, (nothing, ToStruct.tostruct(ProductItemRevision, curr)))
+            @info "comparing tariff items"
+            for j in 1:length(current["product_items"][i]["tariff_items"])
+                curr = current["product_items"][i]["tariff_items"][j]["tariff_ref"]["rev"]
+                push!(diff, (nothing, ToStruct.tostruct(TariffItemRevision, curr)))
+                @info "comparing tariffitempartnerroles"
+                for k in 1:length(current["product_items"][i]["tariff_items"][j]["partner_refs"])
+                    curr = current["product_items"][i]["tariff_items"][j]["partner_refs"][k]["rev"]
+                    push!(diff, (nothing, ToStruct.tostruct(TariffItemPartnerRefRevision, curr)))
+                end
+            end
+        else
+            prev = previous["product_items"][i]["revision"]
+            if curr["ref_invalidfrom"]["value"] == w.ref_version
+                @info ("DELETE" * string(i))
+                push!(diff, (ToStruct.tostruct(ProductItemRevision, prev), ToStruct.tostruct(ProductItemRevision, curr)))
+                @info "DIFF="
+                @show diff
+            else
+                @info ("UPDATE" * string(i))
+                cprr = compareRevisions(ProductItemRevision, prev, curr)
+                if (!isnothing(cprr))
+                    push!(diff, cprr)
+                end
+            end
+        end
+    end
+    @info "final DIFF"
+    @show diff
+    diff
+end
+"""
+utilities: loading roles, managing aconnections
+"""
 
 """
 connect0

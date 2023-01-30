@@ -1,25 +1,51 @@
-using Revise, LifeInsuranceDataModel, TimeZones, SearchLight
+using Revise, JSON, BitemporalPostgres, LifeInsuranceDataModel, DataStructures, TimeZones, SearchLight
+LifeInsuranceDataModel.connect()
+current_workflow = find(Workflow, SQLWhereExpression("id=?", DbId(15)))[1]
+ref_time = current_workflow.tsw_validfrom
+cs::Dict{String,Any} = Dict()
+cs_persisted::Dict{String,Any} = Dict()
+CS_UNDO = Stack{Dict{String,Any}}()
+cs_persisted = JSON.parse(JSON.json(csection(2, now(tz"UTC"), ref_time, 1)))
+cs = deepcopy(cs_persisted)
 
-prs = prsection(2, now(tz"UTC"), now(tz"UTC"))
-pidrolemap = Dict(1 => 1, 2 => 2)
-partnerrolemap::Dict{Integer,PartnerSection} = Dict()
-for key in keys(pidrolemap)
-    partnerrolemap[key] = psection(pidrolemap[key], now(tz"UTC"), now(tz"UTC"))
-end
+push!(CS_UNDO, cs_persisted)
 
-function instantiate_product(prs::ProductSection, partnerrolemap::Dict{Integer,PartnerSection})
-    ts = map(prs.parts) do pt
-        let tiprs = map(pt.ref.partner_roles) do r
-                TariffItemPartnerReference(rev=TariffItemPartnerRefRevision(ref_role=r.ref_role.value),
-                    ref=partnerrolemap[r.ref_role.value])
-            end
-            tir = TariffItemRevision(ref_role=pt.revision.ref_role, ref_tariff=pt.revision.ref_tariff)
-            titr = TariffItemTariffReference(ref=pt.ref, rev=tir)
-            TariffItemSection(tariff_ref=titr, partner_refs=tiprs)
-        end
+@show CS_UNDO
+productpartnerroles::Dict{String,Integer} = Dict()
+productpartnerroles["1"] = 1
+new_product_reference = 2
+#
+#
+#
+prs0 = prsection(new_product_reference, now(tz"UTC"), ref_time)
+@show prs0
+productpartnerroles = Dict()
+
+map(prs0.parts) do pt
+    for r in pt.ref.partner_roles
+        productpartnerroles[string(r.ref_role.value)] = 0
     end
-    pir = ProductItemRevision(ref_product=prs.revision.ref_component)
-    ProductItemSection(revision=pir, tariff_items=ts)
 end
+productpartnerroles["1"] = 1
+productpartnerroles["2"] = 2
 
-instpr = instantiate_product(prs, partnerrolemap)
+@show productpartnerroles
+@show values(productpartnerroles)
+@show 0 in values(productpartnerroles)
+partnerrolemap::Dict{Integer,PartnerSection} = Dict()
+for keystr in keys(productpartnerroles)
+    key = parse(Int, keystr)
+    println
+    partnerrolemap[key] = psection(productpartnerroles[keystr], now(tz"UTC"), ref_time)
+
+end
+@show partnerrolemap
+@info "before instantiation"
+pis = instantiate_product(prs0, partnerrolemap)
+@info "productitem created"
+pisj = JSON.parse(JSON.json(pis))
+@show pisj
+cs["product_items"] = [pisj]
+@show cs["product_items"]
+deltas = compareModelStateContract(cs_persisted, cs, current_workflow)
+@show deltas

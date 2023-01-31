@@ -445,6 +445,7 @@ function compareModelStateContract(previous::Dict{String,Any}, current::Dict{Str
             @info ("INSERT" * string(i))
             push!(diff, (nothing, ToStruct.tostruct(ContractPartnerRefRevision, curr)))
         else
+            # TODO add handling of dependents of productitem for DELETE and UPDATE
             prev = previous["partner_refs"][i]["rev"]
             if curr["ref_invalidfrom"]["value"] == w.ref_version
                 @info ("DELETE" * string(i))

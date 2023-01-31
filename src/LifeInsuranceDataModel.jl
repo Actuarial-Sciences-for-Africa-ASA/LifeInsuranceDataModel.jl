@@ -467,7 +467,7 @@ function compareModelStateContract(previous::Dict{String,Any}, current::Dict{Str
         @info "current pref rev"
         @show curr
         if isnothing(curr["id"]["value"])
-            @info ("INSERT" * string(i))
+            @info ("INSERT" * string(i)) # INSERT can occur only for ProductItems, not for dependent objects - see instantiate_product
             push!(diff, (nothing, ToStruct.tostruct(ProductItemRevision, curr)))
             @info "comparing tariff items"
             for j in 1:length(current["product_items"][i]["tariff_items"])
@@ -479,7 +479,7 @@ function compareModelStateContract(previous::Dict{String,Any}, current::Dict{Str
                     push!(diff, (nothing, ToStruct.tostruct(TariffItemPartnerRefRevision, curr)))
                 end
             end
-        else
+        else # DELETE can occur only for ProductItems, not for dependent objects - analog to INSERT
             prev = previous["product_items"][i]["revision"]
             if curr["ref_invalidfrom"]["value"] == w.ref_version
                 @info ("DELETE" * string(i))

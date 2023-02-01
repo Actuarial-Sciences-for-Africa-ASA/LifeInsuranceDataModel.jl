@@ -445,7 +445,6 @@ function compareModelStateContract(previous::Dict{String,Any}, current::Dict{Str
             @info ("INSERT" * string(i))
             push!(diff, (nothing, ToStruct.tostruct(ContractPartnerRefRevision, curr)))
         else
-            # TODO add handling of dependents of productitem for DELETE and UPDATE
             prev = previous["partner_refs"][i]["rev"]
             if curr["ref_invalidfrom"]["value"] == w.ref_version
                 @info ("DELETE" * string(i))
@@ -467,31 +466,43 @@ function compareModelStateContract(previous::Dict{String,Any}, current::Dict{Str
         curr = current["product_items"][i]["revision"]
         @info "current pref rev"
         @show curr
-        if isnothing(curr["id"]["value"])
-            @info ("INSERT" * string(i))
+        if isnothing(curr["id"]["value"]) || curr["ref_invalidfrom"]["value"] == w.ref_version
+            @info ("INSERT/DELETE productitem" * string(i))
             push!(diff, (nothing, ToStruct.tostruct(ProductItemRevision, curr)))
-            @info "comparing tariff items"
+            @info "INSERT/DELETE tariff items"
             for j in 1:length(current["product_items"][i]["tariff_items"])
                 curr = current["product_items"][i]["tariff_items"][j]["tariff_ref"]["rev"]
                 push!(diff, (nothing, ToStruct.tostruct(TariffItemRevision, curr)))
-                @info "comparing tariffitempartnerroles"
+                @info "INSERT/DELETE tariffitempartners"
                 for k in 1:length(current["product_items"][i]["tariff_items"][j]["partner_refs"])
                     curr = current["product_items"][i]["tariff_items"][j]["partner_refs"][k]["rev"]
                     push!(diff, (nothing, ToStruct.tostruct(TariffItemPartnerRefRevision, curr)))
                 end
             end
         else
+            # TODO add handling of dependents of productitem for UPDATE
             prev = previous["product_items"][i]["revision"]
-            if curr["ref_invalidfrom"]["value"] == w.ref_version
-                @info ("DELETE" * string(i))
-                push!(diff, (ToStruct.tostruct(ProductItemRevision, prev), ToStruct.tostruct(ProductItemRevision, curr)))
-                @info "DIFF="
-                @show diff
-            else
-                @info ("UPDATE" * string(i))
-                cprr = compareRevisions(ProductItemRevision, prev, curr)
-                if (!isnothing(cprr))
-                    push!(diff, cprr)
+            @info ("UPDATE productitem" * string(i))
+            pirr = compareRevisions(ProductItemRevision, prev, curr)
+            if !isnothing(pirr)
+                push!(diff, pirr)
+            end
+            @info "UPDATE tariff items"
+            for j in 1:length(current["product_items"][i]["tariff_items"])
+                curr = current["product_items"][i]["tariff_items"][j]["tariff_ref"]["rev"]
+                prev = previous["product_items"][i]["tariff_items"][j]["tariff_ref"]["rev"]
+                tirr = compareRevisions(TariffItemRevision, prev, curr)
+                if !isnothing(tirr)
+                    push!(diff, tirr)
+                end
+                @info "INSERT/DELETE tariffitempartners"
+                for k in 1:length(current["product_items"][i]["tariff_items"][j]["partner_refs"])
+                    curr = current["product_items"][i]["tariff_items"][j]["partner_refs"][k]["rev"]
+                    prev = previous["product_items"][i]["tariff_items"][j]["partner_refs"][k]["rev"]
+                    tiprr = compareRevisions(TariffItemRevision, prev, curr)
+                    if !isnothing(tiprr)
+                        push!(diff, tiprr)
+                    end
                 end
             end
         end

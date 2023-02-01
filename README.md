@@ -19,7 +19,6 @@ Current features are:
   - view model editing with savepointing using a stack of transient view model states
   - persisting view model state into an uncommitted transaction whereby the last view model states becomes the new bottom of the stack. 
   - rolling back and committing workflow contexts
-and [gitpod](.gitpod.Dockerfile)
 - Test and sample code scripts
   - [for the BitemporalPostgres-API. Creation, Mutation, Committing](testsCreateContract.jl)
   - [and mutations persisted pending and rolled back](testPendingMutations.jl)

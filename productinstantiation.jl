@@ -1,6 +1,18 @@
 using Revise, JSON, BitemporalPostgres, LifeInsuranceDataModel, DataStructures, TimeZones, SearchLight
 LifeInsuranceDataModel.connect()
-current_workflow = find(Workflow, SQLWhereExpression("id=?", DbId(15)))[1]
+current_workflow = Workflow(
+    type_of_entity="Contract",
+    tsw_validfrom=ZonedDateTime(Date("2023-03-01"), tz"UTC"),
+    tsdb_validfrom=now(tz"UTC")
+)
+create_entity!(current_workflow)
+c = Contract()
+cr = ContractRevision(description="contract creation properties")
+@info "before create component"
+create_component!(c, cr, current_workflow)
+
+current_contract = c
+
 ref_time = current_workflow.tsw_validfrom
 cs::Dict{String,Any} = Dict()
 cs_persisted::Dict{String,Any} = Dict()
@@ -47,5 +59,12 @@ pisj = JSON.parse(JSON.json(pis))
 @show pisj
 cs["product_items"] = [pisj]
 @show cs["product_items"]
-deltas = compareModelStateContract(cs_persisted, cs, current_workflow)
-@show deltas
+persistModelStateContract(cs_persisted, cs, current_workflow, current_contract)
+
+
+# tir = cs["product_items"][1]["tariff_items"][1]["tariff_ref"]["rev"]
+# tir["deferment"] = 3
+# tir["annuity_due"] = 456.90
+# tir
+# 
+# deltas = compareModelStateContract(cs, cs2, current_workflow)

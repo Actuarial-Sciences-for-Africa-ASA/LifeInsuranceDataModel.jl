@@ -33,4 +33,23 @@ Current features are:
 When You open this project in a [gitpod container](https://gitpod.io/workspaces) the test code will be executed automatically to spin up and populate the database. -->
 
 ![UML Model](docs/src/assets/LifeInsuranceDataModel.png)
-# 
+
+# Model Features
+## Entities
+- tariff (work in progress)
+   - a kind of index of calculation bases:
+   - formula libraries
+   - probabilities, commutation tables
+   - business case rules
+   - ui plugins for display and editing of specific parameters which are not captured by the generic model
+- tariffpartnerroles (testable)
+  - associates roles for partners to tariffs
+- product, product parts (testable)
+  - bundling of tariffs associating tariff roles (main, bonus, ...)
+- partner (testable) just a placeholder with date of birth and gender
+- contract (editable via MVVM) 
+  - contract partners with roles (policy holder, premium payer)
+  - product items referencing a product, multiple occurences (referencing the same product) possible for adaptions of insured capital 
+    - tariff items refrence tariffs corresponding to the product's parts
+      - tariff item partners reference partners in roles corresponding to the referenced tariff's partner roles
+

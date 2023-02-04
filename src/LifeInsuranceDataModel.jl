@@ -11,7 +11,7 @@ include("DDL.jl")
 using .DDL
 include("InsuranceContracts.jl")
 using .InsuranceContracts
-export compareModelStateContract,
+export persistModelStateContract,
     compareRevisions,
     Contract,
     ContractRevision,
@@ -391,8 +391,7 @@ instantiate_product(prs::ProductSection, prrolemap::Dict{Integer,Integer})::Prod
 function instantiate_product(prs::ProductSection, partnerrolemap::Dict{Integer,PartnerSection})
     ts = map(prs.parts) do pt
         let tiprs = map(pt.ref.partner_roles) do r
-                TariffItemPartnerReference(rev=TariffItemPartnerRefRevision(ref_role=r.ref_role.value),
-                    ref=partnerrolemap[r.ref_role.value])
+                TariffItemPartnerReference(rev=TariffItemPartnerRefRevision(ref_role=r.ref_role.value, ref_partner=partnerrolemap[r.ref_role.value].revision.id))
             end
             tir = TariffItemRevision(ref_role=pt.revision.ref_role, ref_tariff=pt.revision.ref_tariff)
             titr = TariffItemTariffReference(ref=pt.ref, rev=tir)
@@ -424,92 +423,116 @@ function compareRevisions(t, previous::Dict{String,Any}, current::Dict{String,An
 end
 
 """
-compareModelStateContract(previous::Dict{String,Any}, current::Dict{String,Any}, w::Workflow)
-	compare viewmodel state for a contract section
+persistModelStateContract(previous::Dict{String,Any}, current::Dict{String,Any}, w::Workflow, component::Component)
+	persist the delta between previous and current state into into the workflow context
 """
-function compareModelStateContract(previous::Dict{String,Any}, current::Dict{String,Any}, w::Workflow)
-    diff = []
+function persistModelStateContract(previous::Dict{String,Any}, current::Dict{String,Any}, w::Workflow, rootcomponent::Component)
     @show current["revision"]
     @show previous
     cr = compareRevisions(ContractRevision, previous["revision"], current["revision"])
     if (!isnothing(cr))
-        push!(diff, cr)
+        update_component!(previous["revision"], current["revision"], w)
     end
     @info "comparing Partner_refs"
     for i in 1:length(current["partner_refs"])
         @show current["partner_refs"]
-        curr = current["partner_refs"][i]["rev"]
-        @info "current pref rev"
-        @show curr
-        if isnothing(curr["id"]["value"])
-            @info ("INSERT" * string(i))
-            push!(diff, (nothing, ToStruct.tostruct(ContractPartnerRefRevision, curr)))
-        else
-            prev = previous["partner_refs"][i]["rev"]
-            if curr["ref_invalidfrom"]["value"] == w.ref_version
-                @info ("DELETE" * string(i))
-                push!(diff, (ToStruct.tostruct(ContractPartnerRefRevision, prev), ToStruct.tostruct(ContractPartnerRefRevision, curr)))
-                @info "DIFF="
-                @show diff
+        let
+            curr = current["partner_refs"][i]["rev"]
+
+            @info "current pref rev"
+            @show curr
+            if isnothing(curr["id"]["value"])
+                @info ("INSERT" * string(i))
+                let
+                    component = rootcomponent
+                    subcomponent = get_typeof_component(curr)()
+                    create_subcomponent!(component, subcomponent, ToStruct.tostruct(ContractPartnerRefRevision, curr), w)
+                end
             else
-                @info ("UPDATE" * string(i))
-                cprr = compareRevisions(ContractPartnerRefRevision, prev, curr)
-                if (!isnothing(cprr))
-                    push!(diff, cprr)
-                end
-            end
-        end
-    end
-    @info "comparing product items"
-    for i in 1:length(current["product_items"])
-        @show current["product_items"]
-        curr = current["product_items"][i]["revision"]
-        @info "current pref rev"
-        @show curr
-        if isnothing(curr["id"]["value"]) || curr["ref_invalidfrom"]["value"] == w.ref_version
-            @info ("INSERT/DELETE productitem" * string(i))
-            push!(diff, (nothing, ToStruct.tostruct(ProductItemRevision, curr)))
-            @info "INSERT/DELETE tariff items"
-            for j in 1:length(current["product_items"][i]["tariff_items"])
-                curr = current["product_items"][i]["tariff_items"][j]["tariff_ref"]["rev"]
-                push!(diff, (nothing, ToStruct.tostruct(TariffItemRevision, curr)))
-                @info "INSERT/DELETE tariffitempartners"
-                for k in 1:length(current["product_items"][i]["tariff_items"][j]["partner_refs"])
-                    curr = current["product_items"][i]["tariff_items"][j]["partner_refs"][k]["rev"]
-                    push!(diff, (nothing, ToStruct.tostruct(TariffItemPartnerRefRevision, curr)))
-                end
-            end
-        else
-            # TODO add handling of dependents of productitem for UPDATE
-            prev = previous["product_items"][i]["revision"]
-            @info ("UPDATE productitem" * string(i))
-            pirr = compareRevisions(ProductItemRevision, prev, curr)
-            if !isnothing(pirr)
-                push!(diff, pirr)
-            end
-            @info "UPDATE tariff items"
-            for j in 1:length(current["product_items"][i]["tariff_items"])
-                curr = current["product_items"][i]["tariff_items"][j]["tariff_ref"]["rev"]
-                prev = previous["product_items"][i]["tariff_items"][j]["tariff_ref"]["rev"]
-                tirr = compareRevisions(TariffItemRevision, prev, curr)
-                if !isnothing(tirr)
-                    push!(diff, tirr)
-                end
-                @info "INSERT/DELETE tariffitempartners"
-                for k in 1:length(current["product_items"][i]["tariff_items"][j]["partner_refs"])
-                    curr = current["product_items"][i]["tariff_items"][j]["partner_refs"][k]["rev"]
-                    prev = previous["product_items"][i]["tariff_items"][j]["partner_refs"][k]["rev"]
-                    tiprr = compareRevisions(TariffItemRevision, prev, curr)
-                    if !isnothing(tiprr)
-                        push!(diff, tiprr)
+                let
+                    prev = previous["partner_refs"][i]["rev"]
+                    if curr["ref_invalidfrom"]["value"] == w.ref_version
+                        @info ("DELETE" * string(i))
+                        delete_component!(ToStruct.tostruct(ContractPartnerRefRevision, curr), w)
+                    else
+                        @info ("UPDATE" * string(i))
+                        cprr = compareRevisions(ContractPartnerRefRevision, prev, curr)
+                        if (!isnothing(cprr))
+                            update_component!(ToStruct.tostruct(ContractPartnerRefRevision, prev), ToStruct.tostruct(ContractPartnerRefRevision, curr), w)
+                        end
                     end
                 end
             end
         end
     end
-    @info "final DIFF"
-    @show diff
-    diff
+    # TODO fortsetzen refactoring direkt persistieren statt diff list
+    # curr component subcomponents müssen let variablen sein
+    @info "comparing product items"
+    for i in 1:length(current["product_items"])
+        @show current["product_items"]
+        let
+            curr = current["product_items"][i]["revision"]
+            @info "current pref rev"
+            @show curr
+            if isnothing(curr["id"]["value"]) || curr["ref_invalidfrom"]["value"] == w.ref_version
+                let
+                    picomponent = rootcomponent
+                    pisubcomponent = get_typeof_component(ToStruct.tostruct(ProductItemRevision, curr))()
+                    @info ("INSERT/DELETE productitem" * string(i) * "c=" * string(picomponent.id.value))
+                    create_subcomponent!(picomponent, pisubcomponent, ToStruct.tostruct(ProductItemRevision, curr), w)
+                    for j in 1:length(current["product_items"][i]["tariff_items"])
+                        let
+                            curr = current["product_items"][i]["tariff_items"][j]["tariff_ref"]["rev"]
+                            ticomponent = pisubcomponent
+                            tisubcomponent = get_typeof_component(ToStruct.tostruct(TariffItemRevision, curr))()
+                            @info ("INSERT/DELETE tariff item " * string(i) * "/" * string(j) * "c=" * string(ticomponent.id.value))
+                            create_subcomponent!(ticomponent, tisubcomponent, ToStruct.tostruct(TariffItemRevision, curr), w)
+                            for k in 1:length(current["product_items"][i]["tariff_items"][j]["partner_refs"])
+                                let
+                                    curr = current["product_items"][i]["tariff_items"][j]["partner_refs"][k]["rev"]
+                                    tiprcomponent = tisubcomponent
+                                    tiprsubcomponent = get_typeof_component(ToStruct.tostruct(TariffItemPartnerRefRevision, curr))()
+                                    @info ("INSERT/DELETE tariffitempartners" * string(i) * "/" * string(j) * "/" * string(k) * "c=" * string(tiprcomponent.id.value))
+                                    create_subcomponent!(tiprcomponent, tiprsubcomponent, ToStruct.tostruct(TariffItemPartnerRefRevision, curr), w)
+                                end
+                            end
+                        end
+                    end
+                end
+            else
+                prev = previous["product_items"][i]["revision"]
+                @info ("UPDATE productitem" * string(i))
+                pirr = compareRevisions(ProductItemRevision, prev, curr)
+                if !isnothing(pirr)
+                    if (!isnothing(pirr))
+                        update_component!(ToStruct.tostruct(ProductItemRevision, prev), ToStruct.tostruct(ProductItemRevision, curr), w)
+                    end
+                end
+                @info "UPDATE tariff items"
+                for j in 1:length(current["product_items"][i]["tariff_items"])
+                    let
+                        curr = current["product_items"][i]["tariff_items"][j]["tariff_ref"]["rev"]
+                        prev = previous["product_items"][i]["tariff_items"][j]["tariff_ref"]["rev"]
+                        tirr = compareRevisions(TariffItemRevision, prev, curr)
+                        if !isnothing(tirr)
+                            update_component!(ToStruct.tostruct(TariffItemRevision, prev), ToStruct.tostruct(TariffItemRevision, curr), w)
+                        end
+                        @info "INSERT/DELETE tariffitempartners"
+                        for k in 1:length(current["product_items"][i]["tariff_items"][j]["partner_refs"])
+                            let
+                                curr = current["product_items"][i]["tariff_items"][j]["partner_refs"][k]["rev"]
+                                prev = previous["product_items"][i]["tariff_items"][j]["partner_refs"][k]["rev"]
+                                tiprr = compareRevisions(TariffItemPartnerRefRevision, prev, curr)
+                                if !isnothing(tiprr)
+                                    update_component!(ToStruct.tostruct(TariffItemPartnerRefRevision, prev), ToStruct.tostruct(TariffItemPartnerRefRevision, curr), w)
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
 end
 """
 utilities: loading roles, managing aconnections

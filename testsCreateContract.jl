@@ -70,23 +70,36 @@ LifeInsuranceDataModel.load_model()
 
     Partner2 = p.id.value
 
+    tariffparameters = """
+    {
+      "test":
+      {
+      "foo": false,
+      "baz": "qux",
+      "corge": 
+        {
+          "grault": 1
+        }
+      } 
+    }
+    """
 
-    LifeRiskTariff = create_tariff("Life Risk Insurance", "1980 CET - Male Nonsmoker, ANB")
+    LifeRiskTariff = create_tariff("Life Risk Insurance", "1980 CET - Male Nonsmoker, ANB", tariffparameters)
     TerminalIllnessTariff = create_tariff(
         "Terminal Illness",
-        "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB",
+        "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB", tariffparameters
     )
     OccupationalDisabilityTariff = create_tariff(
         "Occupational Disability",
-        "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB",
+        "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB", tariffparameters
     )
     ProfitParticipationTariff = create_tariff(
         "Profit participation",
-        "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB",
+        "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB", tariffparameters
     )
     LifeRiskTariff2 = create_tariff(
         "Two Life Risk Insurance",
-        "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB", [1, 2])
+        "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB", tariffparameters, [1, 2])
 
     find(TariffRevision)
     find(Tariff, SQLWhereExpression("id=?", ProfitParticipationTariff))

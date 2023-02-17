@@ -4,7 +4,7 @@ import SearchLight: DbId
 import Base: @kwdef
 export Tariff, TariffRevision, TariffPartnerRole, TariffPartnerRoleRevision
 using BitemporalPostgres
-
+TariffItemRevision
 
 """
 Tariff
@@ -30,6 +30,7 @@ Tariff_Revision
   ref_validfrom::DbId = InfinityKey
   ref_invalidfrom::DbId = InfinityKey
   description::String = ""
+  parameters::String = ""
   mortality_table::String = ""
 end
 

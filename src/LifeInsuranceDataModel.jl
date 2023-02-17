@@ -175,8 +175,9 @@ function create_product_instance(wf::Workflow, pi::ProductItem, p::Integer, refp
         println(pp.id.value)
         map(find(ProductPartRevision, SQLWhereExpression("ref_component=?", pp.id.value))) do ppr
             println(ppr.description)
+            tr = find(TariffRevision, SQLWhereExpression("ref_component=?", ppr.ref_tariff))[1]
             ti = TariffItem(ref_super=pi.id)
-            tir = TariffItemRevision(ref_role=ppr.ref_role, ref_tariff=ppr.ref_tariff, description=ppr.description)
+            tir = TariffItemRevision(ref_role=ppr.ref_role, ref_tariff=ppr.ref_tariff, description=ppr.description, parameters=tr.parameters)
             create_subcomponent!(pi, ti, tir, wf)
             tip = TariffItemPartnerRef(ref_super=ti.id)
             tipr = TariffItemPartnerRefRevision(ref_partner=refp1, ref_role=prole1)
@@ -348,15 +349,15 @@ function get_products()
 end
 
 """
-create_tariff(dsc::String, mt::String, tariffpartnerroles::Vector{Int}=[1])
+create_tariff(dsc::String, mt::String, parameters::String, tariffpartnerroles::Vector{Int}=[1])
 
   create a tariff, default partnerrole 1 : "Insured Person"
 """
 
-function create_tariff(dsc::String, mt::String, tariffpartnerroles::Vector{Int}=[1])
+function create_tariff(dsc::String, mt::String, parameters::String, tariffpartnerroles::Vector{Int}=[1])
 
     t = LifeInsuranceDataModel.Tariff()
-    tr = LifeInsuranceDataModel.TariffRevision(description=dsc, mortality_table=mt)
+    tr = LifeInsuranceDataModel.TariffRevision(description=dsc, mortality_table=mt, parameters=parameters)
     w = Workflow(
         type_of_entity="Tariff",
         tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"UTC"),
@@ -393,7 +394,7 @@ function instantiate_product(prs::ProductSection, partnerrolemap::Dict{Integer,P
         let tiprs = map(pt.ref.partner_roles) do r
                 TariffItemPartnerReference(rev=TariffItemPartnerRefRevision(ref_role=r.ref_role.value, ref_partner=partnerrolemap[r.ref_role.value].revision.id))
             end
-            tir = TariffItemRevision(ref_role=pt.revision.ref_role, ref_tariff=pt.revision.ref_tariff)
+            tir = TariffItemRevision(ref_role=pt.revision.ref_role, ref_tariff=pt.revision.ref_tariff, parameters=pt.ref.revision.parameters)
             titr = TariffItemTariffReference(ref=pt.ref, rev=tir)
             TariffItemSection(tariff_ref=titr, partner_refs=tiprs)
         end

@@ -217,10 +217,7 @@ TariffItemRevision
   ref_invalidfrom::DbId = InfinityKey
   description::String = ""
   ref_tariff::DbId = DbId()
-  net_premium::Float64 = 0.0
-  annuity_immediate::Float64 = 0.0
-  deferment::Integer = 0
-  annuity_due::Float64 = 0.0
+  parameters::String = ""
 end
 """
 BitemporalPostgres.get_typeof_revision(component::TariffItem) :: Type{TariffItemRevision}

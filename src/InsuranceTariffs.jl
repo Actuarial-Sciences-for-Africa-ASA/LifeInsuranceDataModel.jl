@@ -4,7 +4,6 @@ import SearchLight: DbId
 import Base: @kwdef
 export Tariff, TariffRevision, TariffPartnerRole, TariffPartnerRoleRevision
 using BitemporalPostgres
-TariffItemRevision
 
 """
 Tariff

@@ -126,6 +126,7 @@ TariffItemSection is a section (see above) of a TariffItem component
 """
 @kwdef mutable struct TariffItemSection
     tariff_ref::TariffItemTariffReference = TariffItemTariffReference()
+    contract_attributes::Dict{String,Any} = Dict()
     partner_refs::Vector{TariffItemPartnerReference} = []
 end
 
@@ -213,7 +214,8 @@ function pisection(history_id::Integer, version_id::Integer, tsdb_validfrom, tsw
                                     end
                                 end))
 
-                                TariffItemSection(TariffItemTariffReference(trr, ts), pitrprrs)
+                                ca = JSON.parse(trr.parameters)
+                                TariffItemSection(TariffItemTariffReference(trr, ts), ca, pitrprrs)
                             end
                         end
 
@@ -396,7 +398,8 @@ function instantiate_product(prs::ProductSection, partnerrolemap::Dict{Integer,P
             end
             tir = TariffItemRevision(ref_role=pt.revision.ref_role, ref_tariff=pt.revision.ref_tariff, parameters=pt.ref.revision.parameters)
             titr = TariffItemTariffReference(ref=pt.ref, rev=tir)
-            TariffItemSection(tariff_ref=titr, partner_refs=tiprs)
+            ca = JSON.parse(tir.parameters)
+            TariffItemSection(tariff_ref=titr, ca, partner_refs=tiprs)
         end
     end
     pir = ProductItemRevision(ref_product=prs.revision.ref_component)

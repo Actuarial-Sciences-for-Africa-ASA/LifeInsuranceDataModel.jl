@@ -71,17 +71,11 @@ LifeInsuranceDataModel.load_model()
     Partner2 = p.id.value
 
     tariffparameters = """
-    {
-      "test":
-      {
-      "foo": false,
-      "baz": "qux",
-      "corge": 
-        {
-          "grault": 1
-        }
-      } 
-    }
+  {"n": {"type": "Int", "default": 0,"value":null},
+   "m": {"type": "Int", "default": 0,"value":null},
+   "C": {"type": "Int", "default": 0,"value":null},
+   "begin": {"type": "Date", "default": "2020-01-01","value":null}
+  }
     """
 
     LifeRiskTariff = create_tariff("Life Risk Insurance", "1980 CET - Male Nonsmoker, ANB", tariffparameters)

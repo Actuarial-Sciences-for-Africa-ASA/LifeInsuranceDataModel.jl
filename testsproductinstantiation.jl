@@ -59,6 +59,7 @@ pisj = JSON.parse(JSON.json(pis))
 @show pisj
 cs["product_items"] = [pisj]
 @show cs["product_items"]
+cs["product_items"][1]["tariff_items"][1]["contract_attributes"]["n"]["value"] = 99
 persistModelStateContract(cs_persisted, cs, current_workflow, current_contract)
 
 @testset "load contract uncommitted" begin
@@ -70,5 +71,6 @@ end
     commit_workflow!(current_workflow)
     cs::ContractSection = csection(current_contract.id.value, now(tz"UTC"), ZonedDateTime(Date("2023-03-01"), tz"UTC"), 0)
     @test cs.product_items[1].tariff_items[1].partner_refs[1].rev.ref_partner.value == 1
+    @test cs.product_items[1].tariff_items[1].contract_attributes["n"]["value"] == 99
 end
 

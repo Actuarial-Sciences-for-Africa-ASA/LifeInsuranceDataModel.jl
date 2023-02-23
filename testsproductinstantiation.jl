@@ -74,3 +74,28 @@ end
     @test cs.product_items[1].tariff_items[1].contract_attributes["n"]["value"] == 99
 end
 
+
+
+
+@testset "load contract committed 2 " begin
+    current_workflow = Workflow(
+        type_of_entity="Contract",
+        tsw_validfrom=ZonedDateTime(Date("2023-04-01"), tz"UTC"),
+        tsdb_validfrom=now(tz"UTC"),
+        ref_history=c.ref_history
+    )
+
+    update_entity!(current_workflow)
+    cs = csection(current_contract.id.value, current_workflow.tsdb_validfrom, current_workflow.tsw_validfrom, 1)
+    @test cs.product_items[1].tariff_items[1].contract_attributes["n"]["value"] == 99
+    cs["product_items"][1]["tariff_items"][1]["contract_attributes"]["n"]["value"] = 88
+    persistModelStateContract(cs_persisted, cs, current_workflow, current_contract)
+    @test cs.product_items[1].tariff_items[1].contract_attributes["n"]["value"] == 88
+    commit_workflow!(current_workflow)
+    cs = csection(current_contract.id.value, now(tz"UTC"), ZonedDateTime(Date("2023-04-02"), tz"UTC"), 0)
+    @test cs.product_items[1].tariff_items[1].contract_attributes["n"]["value"] == 88
+end
+
+
+
+

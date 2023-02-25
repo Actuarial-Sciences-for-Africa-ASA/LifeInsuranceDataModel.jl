@@ -86,14 +86,16 @@ end
     )
 
     update_entity!(current_workflow)
-    cs = csection(current_contract.id.value, current_workflow.tsdb_validfrom, current_workflow.tsw_validfrom, 1)
-    @test cs.product_items[1].tariff_items[1].contract_attributes["n"]["value"] == 99
+    cs = JSON.parse(JSON.json(csection(current_contract.id.value, current_workflow.tsdb_validfrom, current_workflow.tsw_validfrom, 1)))
+    cs_persisted = deepcopy(cs)
+    @test cs["product_items"][1]["tariff_items"][1]["contract_attributes"]["n"]["value"] == 99
+
     cs["product_items"][1]["tariff_items"][1]["contract_attributes"]["n"]["value"] = 88
     persistModelStateContract(cs_persisted, cs, current_workflow, current_contract)
-    @test cs.product_items[1].tariff_items[1].contract_attributes["n"]["value"] == 88
+    @test cs["product_items"][1]["tariff_items"][1]["contract_attributes"]["n"]["value"] == 88
     commit_workflow!(current_workflow)
-    cs = csection(current_contract.id.value, now(tz"UTC"), ZonedDateTime(Date("2023-04-02"), tz"UTC"), 0)
-    @test cs.product_items[1].tariff_items[1].contract_attributes["n"]["value"] == 88
+    cs = JSON.parse(JSON.json(csection(current_contract.id.value, current_workflow.tsdb_validfrom, current_workflow.tsw_validfrom, 0)))
+    @test cs["product_items"][1]["tariff_items"][1]["contract_attributes"]["n"]["value"] == 88
 end
 
 

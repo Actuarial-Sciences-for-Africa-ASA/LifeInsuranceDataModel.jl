@@ -514,10 +514,11 @@ function persistModelStateContract(previous::Dict{String,Any}, current::Dict{Str
                     end
                 end
                 @info "UPDATE tariff items"
+
                 for j in 1:length(current["product_items"][i]["tariff_items"])
                     let
                         curr = current["product_items"][i]["tariff_items"][j]["tariff_ref"]["rev"]
-                        curr["attributes"] = JSON.json(current["product_items"][i]["tariff_items"]["contract_attributes"])
+                        curr["parameters"] = JSON.json(current["product_items"][i]["tariff_items"][j]["contract_attributes"])
                         prev = previous["product_items"][i]["tariff_items"][j]["tariff_ref"]["rev"]
                         tirr = compareRevisions(TariffItemRevision, prev, curr)
                         if !isnothing(tirr)

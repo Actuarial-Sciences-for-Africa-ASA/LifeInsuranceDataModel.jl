@@ -3,8 +3,10 @@
 [![Documentation](https://github.com/actuarial-sciences-for-africa-asa/LifeInsuranceDataModel.jl/actions/workflows/GenDocs.yml/badge.svg)](https://github.com/actuarial-sciences-for-africa-asa/LifeInsuranceDataModel.jl/actions/workflows/GenDocs.yml)
 
 This is a prototype model for bitemporal data management based on [a Julia bitemporal data management API](https://github.com/actuarial-sciences-for-africa-asa/BitemporalPostgres.jl)
+This is - as of now - all about versioning of generic entities and relationships for a Life Insurance app and uses bitemporal relational modelling. The bitemporal model is agnostic to domain specific strucure, which is in serialized form on this level of modelling. That refers to product definitions - entities product, product part and tariff - as well as contract data insofar they are product specific - product and tariff items.
 
-The Data Model of the prototype. This is - as of now - all about versioning of entities and relationships for a Life Insurance app - domain specific attributes will be added when calculations will come into play. (Like the examples from [LifeContingencies.jl](https://github.com/JuliaActuary/LifeContingencies.jl))
+Products, that define data structures and functions, will live in their own packages and be pluggable into the contract management system. 
+(Like the examples from [LifeContingencies.jl](https://github.com/JuliaActuary/LifeContingencies.jl))
 
 Current features are:
 

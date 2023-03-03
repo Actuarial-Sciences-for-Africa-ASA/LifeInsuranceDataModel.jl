@@ -435,7 +435,7 @@ function persistModelStateContract(previous::Dict{String,Any}, current::Dict{Str
     @show previous
     cr = compareRevisions(ContractRevision, previous["revision"], current["revision"])
     if (!isnothing(cr))
-        update_component!(previous["revision"], current["revision"], w)
+        update_component!(ToStruct.tostruct(ContractRevision, previous["revision"]), ToStruct.tostruct(ContractRevision, current["revision"]), w)
     end
     @info "comparing Partner_refs"
     for i in 1:length(current["partner_refs"])

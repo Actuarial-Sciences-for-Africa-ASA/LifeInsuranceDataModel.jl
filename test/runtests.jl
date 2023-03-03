@@ -1,3 +1,5 @@
 push!(LOAD_PATH, "../src")
-include("../testsCreateContract.jl")
-include("productinstantiation.jl")
+include("../testCreateContract.jl")
+include("../testPendingMutations.jl")
+include("../testProductinstantiation.jl")
+include("../testLoadHistory.jl")

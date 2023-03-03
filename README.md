@@ -8,6 +8,7 @@ The Data Model of the prototype. This is - as of now - all about versioning of e
 
 Current features are:
 
+- Product neutral architecture: Loose coupling of management system and products, all product specific processing is defined in product data.
 - Bitemporal CRUD of contracts, products and partners 
   - using transaction logic making uncommitted transaction data persistent, such that uncommitted transactions can be 
     - suspended and resumed and 
@@ -21,8 +22,9 @@ Current features are:
   - rolling back and committing workflow contexts
 - Test and sample code scripts
   - [for the BitemporalPostgres-API. Creation, Mutation, Committing](testsCreateContract.jl)
-  - [and mutations persisted pending and rolled back](testPendingMutations.jl)
-  - to be completed to cover all features
+  - [for mutations persisted 
+  ,pending and rolled back](testPendingMutations.jl)
+  - [for creation and mutation of product items](testsproductinstantiation.jl)
 - scripts for [github workflow](.github/workflows/CI.yml) and [gitpod](.gitpod.Dockerfile) providing a running postgres instance.
 
 <!--[not up to date

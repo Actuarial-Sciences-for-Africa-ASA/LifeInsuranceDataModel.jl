@@ -29,12 +29,14 @@ Tariff_Revision
   ref_validfrom::DbId = InfinityKey
   ref_invalidfrom::DbId = InfinityKey
   description::String = ""
+  interface_id::Integer = 0
   parameters::String = ""
   mortality_table::String = ""
 end
 
 Base.copy(src::TariffRevision) = TariffRevision(
   ref_component=src.ref_component,
+  interface_id=src.interface_id,
   description=src.description)
 #
 """

@@ -104,6 +104,7 @@ function up()
             column(:ref_invalidfrom, :bigint, "DEFAULT 2^53 - 1 REFERENCES versions(id) ON DELETE SET DEFAULT")
             column(:ref_valid, :int8range)
             column(:description, :string)
+            column(:interface_id, :bigint)
             column(:mortality_table, :string)
             column(:parameters, :string)
         ]

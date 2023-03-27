@@ -14,11 +14,14 @@ using ToStruct
 using JSON
 # purging the data model entirely - empty the schema
 
-if (haskey(ENV, "GITPOD_REPO_ROOT"))
-    run(```psql -f sqlsnippets/droptables.sql```)
-elseif (haskey(ENV, "GENIE_ENV") & (ENV["GENIE_ENV"] == "dev"))
-    run(```psql -d postgres -f sqlsnippets/droptables.sql```)
-end
+# if (haskey(ENV, "GITPOD_REPO_ROOT"))
+#     run(```psql -f sqlsnippets/droptables.sql```)
+# elseif (haskey(ENV, "GENIE_ENV") & (ENV["GENIE_ENV"] == "dev"))
+#     run(```psql -d postgres -f sqlsnippets/droptables.sql```)
+# end
+LifeInsuranceDataModel.connect()
+SearchLight.query("DROP SCHEMA public CASCADE")
+SearchLight.query("CREATE SCHEMA public")
 # Loading the data model- Create tables, constraints etc. and load Roles
 # loading inverses of the role tables to provide role descriptions in object creation, for instance like in: "ref_role=cpRole["Policy Holder"]
 
@@ -49,7 +52,7 @@ LifeInsuranceDataModel.load_model()
     # Create a Partner
 
     p = LifeInsuranceDataModel.Partner()
-    pr = LifeInsuranceDataModel.PartnerRevision(description="Partner 1")
+    pr = LifeInsuranceDataModel.PartnerRevision(description="Partner 1", sex="f", smoker=false)
     w = Workflow(type_of_entity="Partner",
         tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"UTC"),
     )
@@ -60,7 +63,7 @@ LifeInsuranceDataModel.load_model()
     Partner1 = p.id.value
 
     p = LifeInsuranceDataModel.Partner()
-    pr = LifeInsuranceDataModel.PartnerRevision(description="Partner 2")
+    pr = LifeInsuranceDataModel.PartnerRevision(description="Partner 2", sex="m", smoker=true)
     w = Workflow(type_of_entity="Partner",
         tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"UTC"),
     )

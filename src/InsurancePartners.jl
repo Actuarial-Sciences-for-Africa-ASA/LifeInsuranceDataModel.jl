@@ -37,6 +37,8 @@ Partner_Revision
   ref_invalidfrom::DbId = InfinityKey
   description::String = ""
   date_of_birth::Date = Date(2000, 1, 1)
+  sex :: String =""
+  smoker::Bool=false
 end
 
 Base.copy(src::PartnerRevision) = PartnerRevision(

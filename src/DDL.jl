@@ -251,7 +251,9 @@ function up()
             column(:ref_invalidfrom, :bigint, "DEFAULT 2^53 - 1 REFERENCES versions(id) ON DELETE SET DEFAULT")
             column(:ref_valid, :int8range)
             column(:description, :string)
-            column(:date_of_birth, :date)]
+            column(:date_of_birth, :date)
+            column(:sex, :string)
+            column(:smoker, :bool)]
     end
 
     createRevisionsTriggerAndConstraint(

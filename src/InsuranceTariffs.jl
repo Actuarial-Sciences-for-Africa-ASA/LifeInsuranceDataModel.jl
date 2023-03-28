@@ -32,12 +32,15 @@ Tariff_Revision
   interface_id::Integer = 0
   parameters::String = ""
   mortality_table::String = ""
+  interest_rate::Float64
 end
 
 Base.copy(src::TariffRevision) = TariffRevision(
   ref_component=src.ref_component,
   interface_id=src.interface_id,
-  description=src.description)
+  mortality_table=src.mortality_table,
+  description=src.description,
+  parameters=src.parameters)
 #
 """
 TariffPartnerRole

@@ -106,8 +106,8 @@ function up()
             column(:description, :string)
             column(:interface_id, :bigint)
             column(:mortality_table, :string)
-            column(:parameters, :string)
-        ]
+            column(:interest_rate, :float)
+            column(:parameters, :string)]
     end
 
     create_table(:tariffPartnerRoles) do

@@ -31,8 +31,8 @@ Tariff_Revision
   description::String = ""
   interface_id::Integer = 0
   parameters::String = ""
-  mortality_table::String = ""
-  interest_rate::Float64
+  mortality_table::String = "description=src.description,"
+  interest_rate::Float64 = 0.0
 end
 
 Base.copy(src::TariffRevision) = TariffRevision(

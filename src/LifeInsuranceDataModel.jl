@@ -355,7 +355,7 @@ function get_products()
 end
 
 """
-create_tariff(dsc::String, interface::Integer, mt::String, parameters::String, tariffpartnerroles::Vector{Int}=[1])
+create_tariff(dsc::String, interface::Integer,  i::float, mt::String, parameters::String, tariffpartnerroles::Vector{Int}=[1])
 
   create a tariff, default partnerrole 1 : "Insured Person"
 """
@@ -363,7 +363,7 @@ create_tariff(dsc::String, interface::Integer, mt::String, parameters::String, t
 function create_tariff(dsc::String, interface::Integer, mt::String, parameters::String, tariffpartnerroles::Vector{Int}=[1])
 
     t = LifeInsuranceDataModel.Tariff()
-    tr = LifeInsuranceDataModel.TariffRevision(description=dsc, interface_id=interface, mortality_table=mt, parameters=parameters)
+    tr = LifeInsuranceDataModel.TariffRevision(description=dsc, interface_id=interface, interest_rate=i, mortality_table=mt, parameters=parameters)
     w = Workflow(
         type_of_entity="Tariff",
         tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"UTC"),

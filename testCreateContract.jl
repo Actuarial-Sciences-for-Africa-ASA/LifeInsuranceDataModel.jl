@@ -81,21 +81,21 @@ LifeInsuranceDataModel.load_model()
   }
     """
 
-    LifeRiskTariff = create_tariff("Life Risk Insurance", 1, "1980 CET - Male Nonsmoker, ANB", tariffparameters)
+    LifeRiskTariff = create_tariff("Life Risk Insurance", 1, 0.02, "1980 CET - Male Nonsmoker, ANB", tariffparameters)
     TerminalIllnessTariff = create_tariff(
-        "Terminal Illness", 2,
+        "Terminal Illness", 2, 0.02,
         "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB", tariffparameters
     )
     OccupationalDisabilityTariff = create_tariff(
-        "Occupational Disability", 2,
+        "Occupational Disability", 2, 0.02,
         "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB", tariffparameters
     )
     ProfitParticipationTariff = create_tariff(
-        "Profit participation", 2,
+        "Profit participation", 2, 0.02,
         "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB", tariffparameters
     )
     LifeRiskTariff2 = create_tariff(
-        "Two Life Risk Insurance", 2,
+        "Two Life Risk Insurance", 2, 0.02,
         "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB", tariffparameters, [1, 2])
 
     find(TariffRevision)

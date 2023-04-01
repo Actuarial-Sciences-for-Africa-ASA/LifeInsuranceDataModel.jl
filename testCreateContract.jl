@@ -76,27 +76,32 @@ LifeInsuranceDataModel.load_model()
     tariffparameters = """
   {"n": {"type": "Int", "default": 0,"value":null},
    "m": {"type": "Int", "default": 0,"value":null},
-   "C": {"type": "Int", "default": 0,"value":null},
    "begin": {"type": "Date", "default": "2020-01-01","value":null}
   }
     """
+    contract_attributes = """
+{"n": {"type": "Int", "default": 0,"value":null},
+ "m": {"type": "Int", "default": 0,"value":null},
+ "begin": {"type": "Date", "default": "2020-01-01","value":null}
+}
+  """
 
-    LifeRiskTariff = create_tariff("Life Risk Insurance", 1, 0.02, "1980 CET - Male Nonsmoker, ANB", tariffparameters)
+    LifeRiskTariff = create_tariff("Life Risk Insurance", 1, 0.02, "1980 CET - Male Nonsmoker, ANB", tariffparameters, contract_attributes)
     TerminalIllnessTariff = create_tariff(
         "Terminal Illness", 2, 0.02,
-        "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB", tariffparameters
+        "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB", tariffparameters, contract_attributes
     )
     OccupationalDisabilityTariff = create_tariff(
         "Occupational Disability", 2, 0.02,
-        "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB", tariffparameters
+        "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB", tariffparameters, contract_attributes
     )
     ProfitParticipationTariff = create_tariff(
         "Profit participation", 2, 0.02,
-        "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB", tariffparameters
+        "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB", tariffparameters, contract_attributes
     )
     LifeRiskTariff2 = create_tariff(
         "Two Life Risk Insurance", 2, 0.02,
-        "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB", tariffparameters, [1, 2])
+        "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB", tariffparameters, contract_attributes, [1, 2])
 
     find(TariffRevision)
     find(Tariff, SQLWhereExpression("id=?", ProfitParticipationTariff))

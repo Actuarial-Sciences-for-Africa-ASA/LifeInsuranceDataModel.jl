@@ -81,6 +81,7 @@ is a section (see above) of a Tariff entity
     ref_version::SearchLight.DbId = MaxVersion
     revision::TariffRevision = TariffRevision()
     partner_roles::Vector{TariffPartnerRoleRevision} = []
+    contract_attributes::Dict{String,Any} = Dict()
 end
 
 """
@@ -289,7 +290,8 @@ function tsection(tariff_id::Integer, tsdb_validfrom, tsworld_validfrom, activeT
         trpr = collect(Iterators.flatten(map(find(TariffPartnerRole, SQLWhereExpression("ref_super=?", tr.ref_component))) do tpr
             get_revisionIfAny(TariffPartnerRoleRevision, DbId(tpr.id), DbId(version_id))
         end))
-        TariffSection(revision=tr, partner_roles=trpr)
+        ca = JSON.parse(tr.contract_attributes)
+        TariffSection(revision=tr, partner_roles=trpr, contract_attributes=ca)
     end
 end
 
@@ -355,15 +357,15 @@ function get_products()
 end
 
 """
-create_tariff(dsc::String, interface::Integer,  i::Float64, mt::String, parameters::String, tariffpartnerroles::Vector{Int}=[1])
+create_tariff(dsc::String, interface::Integer,  i::Float64, mt::String, parameters::String, contract_attributes::String, tariffpartnerroles::Vector{Int}=[1])
 
   create a tariff, default partnerrole 1 : "Insured Person"
 """
 
-function create_tariff(dsc::String, interface::Integer, i::Float64, mt::String, parameters::String, tariffpartnerroles::Vector{Int}=[1])
+function create_tariff(dsc::String, interface::Integer, i::Float64, mt::String, parameters::String, contract_attributes::String, tariffpartnerroles::Vector{Int}=[1])
 
     t = LifeInsuranceDataModel.Tariff()
-    tr = LifeInsuranceDataModel.TariffRevision(description=dsc, interface_id=interface, interest_rate=i, mortality_table=mt, parameters=parameters)
+    tr = LifeInsuranceDataModel.TariffRevision(description=dsc, interface_id=interface, interest_rate=i, mortality_table=mt, parameters=parameters, contract_attributes=contract_attributes)
     w = Workflow(
         type_of_entity="Tariff",
         tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"UTC"),

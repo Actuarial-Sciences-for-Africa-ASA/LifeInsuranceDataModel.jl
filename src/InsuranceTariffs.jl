@@ -31,6 +31,7 @@ Tariff_Revision
   description::String = ""
   interface_id::Integer = 0
   parameters::String = ""
+  contract_attributes::String = ""
   mortality_table::String = "description=src.description,"
   interest_rate::Float64 = 0.0
 end

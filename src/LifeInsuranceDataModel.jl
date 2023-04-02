@@ -27,6 +27,8 @@ export persistModelStateContract,
     get_products,
     history_forest,
     instantiate_product,
+    load_role,
+    load_roles,
     psection,
     ProductItem,
     ProductItemRevision,
@@ -167,7 +169,7 @@ ContractSection
 end
 
 """
-create_product_instance(wf::Workflow; pi::ProductItem, p::Integer, refp1::Integer,prole1::Integer)
+create_product_instance(wf::Workflow; pi::ProductItem, p::Integer, partnerrolemap::Dict{Integer,PartnerSection})
 
 	creates tariff items of a productitem pi corresponding to
 	the product parts of a Product p referencing the respective tariffs
@@ -176,7 +178,7 @@ create_product_instance(wf::Workflow; pi::ProductItem, p::Integer, refp1::Intege
     yields persisted tariff items
 """
 
-function create_product_instance(wf::Workflow, pi::ProductItem, p::Integer, refp1::Integer, prole1::Integer)
+function create_product_instance(wf::Workflow, pi::ProductItem, p::Integer, partnerrolemap::Dict{Integer,PartnerSection})
     map(find(ProductPart, SQLWhereExpression("ref_super=?", p))) do pp
         println(pp.id.value)
         map(find(ProductPartRevision, SQLWhereExpression("ref_component=?", pp.id.value))) do ppr
@@ -186,7 +188,9 @@ function create_product_instance(wf::Workflow, pi::ProductItem, p::Integer, refp
             tir = TariffItemRevision(ref_role=ppr.ref_role, ref_tariff=ppr.ref_tariff, description=ppr.description, parameters=tr.parameters)
             create_subcomponent!(pi, ti, tir, wf)
             tip = TariffItemPartnerRef(ref_super=ti.id)
-            tipr = TariffItemPartnerRefRevision(ref_partner=refp1, ref_role=prole1)
+            map(keys(partnerrolemap)) do role
+                tipr = TariffItemPartnerRefRevision(ref_partner=partnerrolemap[role].revision.id, ref_role=role)
+            end
             create_subcomponent!(ti, tip, tipr, wf)
             println(tir)
             println(tipr)
@@ -615,6 +619,18 @@ function load_roles()
 
     productpartroles = map(["Main Coverage - Life" "Supplementary Coverage - Occupational Disablity" "Supplementary Coverage - Terminal Illness" "Profit participation"]) do val
         save!(ProductPartRole(value=val))
+    end
+end
+
+"""
+function load_role(role)::Vector{Dict{String,Any}}
+    into ViewModel
+"""
+
+function load_role(role)::Vector{Dict{String,Any}}
+    LifeInsuranceDataModel.connect()
+    map(find(role)) do entry
+        Dict{String,Any}("value" => entry.id.value, "label" => entry.value)
     end
 end
 

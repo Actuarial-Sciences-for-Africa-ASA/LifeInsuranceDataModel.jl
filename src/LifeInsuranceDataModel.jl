@@ -187,13 +187,12 @@ function create_product_instance(wf::Workflow, pi::ProductItem, p::Integer, part
             ti = TariffItem(ref_super=pi.id)
             tir = TariffItemRevision(ref_role=ppr.ref_role, ref_tariff=ppr.ref_tariff, description=ppr.description, parameters=tr.parameters)
             create_subcomponent!(pi, ti, tir, wf)
-            tip = TariffItemPartnerRef(ref_super=ti.id)
-            map(keys(partnerrolemap)) do role
+            for role in keys(partnerrolemap)
+                tip = TariffItemPartnerRef(ref_super=ti.id)
                 tipr = TariffItemPartnerRefRevision(ref_partner=partnerrolemap[role].revision.id, ref_role=role)
+                create_subcomponent!(ti, tip, tipr, wf)
+                println(tipr)
             end
-            create_subcomponent!(ti, tip, tipr, wf)
-            println(tir)
-            println(tipr)
         end
     end
 end
@@ -217,7 +216,6 @@ function pisection(history_id::Integer, version_id::Integer, tsdb_validfrom, tsw
                                 pitrprrs = collect(Iterators.flatten(map(pitrprs) do pr
                                     map(get_revisionIfAny(TariffItemPartnerRefRevision, pr.id, DbId(version_id))) do prr
                                         let ps = psection(prr.ref_partner.value, tsdb_validfrom, tsworld_validfrom)
-
                                             TariffItemPartnerReference(prr, ps)
                                         end
                                     end
@@ -294,8 +292,13 @@ function tsection(tariff_id::Integer, tsdb_validfrom, tsworld_validfrom, activeT
         trpr = collect(Iterators.flatten(map(find(TariffPartnerRole, SQLWhereExpression("ref_super=?", tr.ref_component))) do tpr
             get_revisionIfAny(TariffPartnerRoleRevision, DbId(tpr.id), DbId(version_id))
         end))
-        ca = JSON.parse(tr.contract_attributes)
-        TariffSection(revision=tr, partner_roles=trpr, contract_attributes=ca)
+        try
+            ca = JSON.parse(tr.contract_attributes)
+            TariffSection(revision=tr, partner_roles=trpr, contract_attributes=ca)
+        catch err
+            @error ("ERROR:  exception parsing contract attributes " * tr.contract_attributes * "  tariff=" * tr.ref_component)
+        end
+
     end
 end
 
@@ -361,15 +364,15 @@ function get_products()
 end
 
 """
-create_tariff(dsc::String, interface::Integer,  i::Float64, mt::String, parameters::String, contract_attributes::String, tariffpartnerroles::Vector{Int}=[1])
+create_tariff(dsc::String, interface::Integer,  i::Float64, parameters::String, contract_attributes::String, tariffpartnerroles::Vector{Int}=[1])
 
-  create a tariff, default partnerrole 1 : "Insured Person"
+  create a tariff, default partnerroles :[1]
 """
 
-function create_tariff(dsc::String, interface::Integer, i::Float64, mt::String, parameters::String, contract_attributes::String, tariffpartnerroles::Vector{Int}=[1])
+function create_tariff(dsc::String, interface::Integer, i::Float64, parameters::String, contract_attributes::String, tariffpartnerroles::Vector{Int}=[1])
 
     t = LifeInsuranceDataModel.Tariff()
-    tr = LifeInsuranceDataModel.TariffRevision(description=dsc, interface_id=interface, interest_rate=i, mortality_table=mt, parameters=parameters, contract_attributes=contract_attributes)
+    tr = LifeInsuranceDataModel.TariffRevision(description=dsc, interface_id=interface, interest_rate=i, parameters=parameters, contract_attributes=contract_attributes)
     w = Workflow(
         type_of_entity="Tariff",
         tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"UTC"),

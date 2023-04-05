@@ -217,7 +217,7 @@ TariffItemRevision
   ref_invalidfrom::DbId = InfinityKey
   description::String = ""
   ref_tariff::DbId = DbId()
-  parameters::String = ""
+  contract_attributes::String = "{}"
 end
 """
 BitemporalPostgres.get_typeof_revision(component::TariffItem) :: Type{TariffItemRevision}

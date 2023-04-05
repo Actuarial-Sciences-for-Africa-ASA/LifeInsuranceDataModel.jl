@@ -30,18 +30,16 @@ Tariff_Revision
   ref_invalidfrom::DbId = InfinityKey
   description::String = ""
   interface_id::Integer = 0
-  parameters::String = ""
-  contract_attributes::String = ""
-  mortality_table::String = "description=src.description,"
-  interest_rate::Float64 = 0.0
+  parameters::String = "{}"
+  contract_attributes::String = "{}"
 end
 
 Base.copy(src::TariffRevision) = TariffRevision(
   ref_component=src.ref_component,
   interface_id=src.interface_id,
-  mortality_table=src.mortality_table,
   description=src.description,
-  parameters=src.parameters)
+  parameters=src.parameters,
+  contract_attributes=src.contract_attributes)
 #
 """
 TariffPartnerRole

@@ -105,8 +105,6 @@ function up()
             column(:ref_valid, :int8range)
             column(:description, :string)
             column(:interface_id, :bigint)
-            column(:mortality_table, :string)
-            column(:interest_rate, :float)
             column(:parameters, :string)
             column(:contract_attributes, :string)]
     end
@@ -314,7 +312,7 @@ function up()
             column(:ref_valid, :int8range)
             column(:description, :string)
             column(:ref_tariff, :bigint, "REFERENCES tariffs(id) ON DELETE CASCADE")
-            column(:parameters, :string)
+            column(:contract_attributes, :string)
         ]
     end
 

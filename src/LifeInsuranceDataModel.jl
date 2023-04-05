@@ -185,7 +185,7 @@ function create_product_instance(wf::Workflow, pi::ProductItem, p::Integer, part
             println(ppr.description)
             tr = find(TariffRevision, SQLWhereExpression("ref_component=?", ppr.ref_tariff))[1]
             ti = TariffItem(ref_super=pi.id)
-            tir = TariffItemRevision(ref_role=ppr.ref_role, ref_tariff=ppr.ref_tariff, description=ppr.description, parameters=tr.parameters)
+            tir = TariffItemRevision(ref_role=ppr.ref_role, ref_tariff=ppr.ref_tariff, description=ppr.description, contract_attributes=tr.contract_attributes)
             create_subcomponent!(pi, ti, tir, wf)
             for role in keys(partnerrolemap)
                 tip = TariffItemPartnerRef(ref_super=ti.id)
@@ -221,7 +221,7 @@ function pisection(history_id::Integer, version_id::Integer, tsdb_validfrom, tsw
                                     end
                                 end))
 
-                                ca = JSON.parse(trr.parameters)
+                                ca = JSON.parse(trr.contract_attributes)
                                 TariffItemSection(tariff_ref=TariffItemTariffReference(trr, ts), partner_refs=pitrprrs, contract_attributes=ca)
                             end
                         end
@@ -364,15 +364,15 @@ function get_products()
 end
 
 """
-create_tariff(dsc::String, interface::Integer,  i::Float64, parameters::String, contract_attributes::String, tariffpartnerroles::Vector{Int}=[1])
+create_tariff(dsc::String, interface::Integer, parameters::String, contract_attributes::String, tariffpartnerroles::Vector{Int}=[1])
 
   create a tariff, default partnerroles :[1]
 """
 
-function create_tariff(dsc::String, interface::Integer, i::Float64, parameters::String, contract_attributes::String, tariffpartnerroles::Vector{Int}=[1])
+function create_tariff(dsc::String, interface::Integer, parameters::String, contract_attributes::String, tariffpartnerroles::Vector{Int}=[1])
 
     t = LifeInsuranceDataModel.Tariff()
-    tr = LifeInsuranceDataModel.TariffRevision(description=dsc, interface_id=interface, interest_rate=i, parameters=parameters, contract_attributes=contract_attributes)
+    tr = LifeInsuranceDataModel.TariffRevision(description=dsc, interface_id=interface, parameters=parameters, contract_attributes=contract_attributes)
     w = Workflow(
         type_of_entity="Tariff",
         tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"UTC"),

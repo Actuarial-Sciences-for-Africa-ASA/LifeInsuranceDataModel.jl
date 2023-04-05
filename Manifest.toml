@@ -2,7 +2,7 @@
 
 julia_version = "1.8.2"
 manifest_format = "2.0"
-project_hash = "e0c2fdcaf25efdae016cbb3abaec66081ee08149"
+project_hash = "e0fd419df8a0accf902eeff713836a935c69f767"
 
 [[deps.AbstractTrees]]
 git-tree-sha1 = "faa260e4cb5aba097a73fab382dd4b5819d8ec8c"
@@ -360,6 +360,12 @@ version = "0.7.5"
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
 version = "2022.2.1"
 
+[[deps.NBInclude]]
+deps = ["JSON", "Markdown", "SoftGlobalScope"]
+git-tree-sha1 = "ae1ca609f7a3eb019412e8bee12663e48188f1a9"
+uuid = "0db19996-df87-5ea3-a455-e3a50d440464"
+version = "2.3.0"
+
 [[deps.NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 version = "1.2.0"
@@ -499,6 +505,12 @@ version = "1.0.3"
 
 [[deps.Sockets]]
 uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
+
+[[deps.SoftGlobalScope]]
+deps = ["REPL"]
+git-tree-sha1 = "986ec2b6162ccb95de5892ed17832f95badf770c"
+uuid = "b85f4697-e234-5449-a836-ec8e2f98b302"
+version = "1.1.0"
 
 [[deps.SortingAlgorithms]]
 deps = ["DataStructures"]

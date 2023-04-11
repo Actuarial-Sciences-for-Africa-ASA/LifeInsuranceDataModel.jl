@@ -86,22 +86,12 @@ LifeInsuranceDataModel.load_model()
 }
   """
 
-    LifeRiskTariff = create_tariff("Life Risk Insurance", 1, 0.02, "1980 CET - Male Nonsmoker, ANB", tariffparameters, contract_attributes)
-    TerminalIllnessTariff = create_tariff(
-        "Terminal Illness", 2, 0.02,
-        "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB", tariffparameters, contract_attributes
-    )
-    OccupationalDisabilityTariff = create_tariff(
-        "Occupational Disability", 2, 0.02,
-        "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB", tariffparameters, contract_attributes
-    )
-    ProfitParticipationTariff = create_tariff(
-        "Profit participation", 2, 0.02,
-        "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB", tariffparameters, contract_attributes
-    )
+    LifeRiskTariff = create_tariff("Life Risk Insurance", 1, tariffparameters, contract_attributes)
+    TerminalIllnessTariff = create_tariff("Terminal Illness", 2, tariffparameters, contract_attributes)
+    OccupationalDisabilityTariff = create_tariff("Occupational Disability", 2, tariffparameters, contract_attributes)
+    ProfitParticipationTariff = create_tariff("Profit participation", 2, tariffparameters, contract_attributes)
     LifeRiskTariff2 = create_tariff(
-        "Two Life Risk Insurance", 2, 0.02,
-        "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB", tariffparameters, contract_attributes, [1, 2])
+        "Two Life Risk Insurance", 2, "{}", contract_attributes, [1, 2])
 
     find(TariffRevision)
     find(Tariff, SQLWhereExpression("id=?", ProfitParticipationTariff))
@@ -257,7 +247,11 @@ LifeInsuranceDataModel.load_model()
     create_subcomponent!(c, cpr, cprr, w1)
     # pi 1
     LifeRiskTIODProduct = find(Product, SQLWhereExpression("id=?", 2))[1].id.value
+    PartnerroleMap = Dict{Integer,PartnerSection}()
     PartnerRole = tiprRole["Insured Person"]
+    PartnerroleMap[PartnerRole] = psection(Partner1, now(tz"UTC"), w1.tsw_validfrom, 0)
+    PartnerRole = tiprRole["2nd Insured Person"]
+    PartnerroleMap[PartnerRole] = psection(Partner2, now(tz"UTC"), w1.tsw_validfrom, 0)
 
     cpi = ProductItem(ref_super=c.id)
     cpir = ProductItemRevision(
@@ -270,8 +264,7 @@ LifeInsuranceDataModel.load_model()
         w1,
         cpi,
         LifeRiskTIODProduct,
-        Partner1,
-        PartnerRole,
+        PartnerroleMap,
     )
     commit_workflow!(w1)
     # update Contract yellow
@@ -329,8 +322,7 @@ LifeInsuranceDataModel.load_model()
         w4,
         cpi,
         LifeRiskTIODProduct,
-        Partner1,
-        PartnerRole,
+        PartnerroleMap,
     )
     commit_workflow!(w4)
 

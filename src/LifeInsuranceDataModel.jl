@@ -409,9 +409,9 @@ function instantiate_product(prs::ProductSection, partnerrolemap::Dict{Integer,P
         let tiprs = map(pt.ref.partner_roles) do r
                 TariffItemPartnerReference(rev=TariffItemPartnerRefRevision(ref_role=r.ref_role.value, ref_partner=partnerrolemap[r.ref_role.value].revision.id))
             end
-            tir = TariffItemRevision(ref_role=pt.revision.ref_role, ref_tariff=pt.revision.ref_tariff, parameters=pt.ref.revision.parameters)
+            tir = TariffItemRevision(ref_role=pt.revision.ref_role, ref_tariff=pt.revision.ref_tariff, contract_attributes=pt.ref.revision.contract_attributes)
             titr = TariffItemTariffReference(ref=pt.ref, rev=tir)
-            ca = JSON.parse(tir.parameters)
+            ca = JSON.parse(tir.contract_attributes)
             TariffItemSection(tariff_ref=titr, partner_refs=tiprs, contract_attributes=ca)
         end
     end
@@ -500,7 +500,7 @@ function persistModelStateContract(previous::Dict{String,Any}, current::Dict{Str
                     for j in 1:length(current["product_items"][i]["tariff_items"])
                         let
                             curr = current["product_items"][i]["tariff_items"][j]["tariff_ref"]["rev"]
-                            curr["parameters"] = JSON.json(current["product_items"][i]["tariff_items"][j]["contract_attributes"])
+                            curr["contract_attributes"] = JSON.json(current["product_items"][i]["tariff_items"][j]["contract_attributes"])
                             ticomponent = pisubcomponent
                             tisubcomponent = get_typeof_component(ToStruct.tostruct(TariffItemRevision, curr))()
                             @info ("INSERT/DELETE tariff item " * string(i) * "/" * string(j) * "c=" * string(ticomponent.id.value))
@@ -531,7 +531,7 @@ function persistModelStateContract(previous::Dict{String,Any}, current::Dict{Str
                 for j in 1:length(current["product_items"][i]["tariff_items"])
                     let
                         curr = current["product_items"][i]["tariff_items"][j]["tariff_ref"]["rev"]
-                        curr["parameters"] = JSON.json(current["product_items"][i]["tariff_items"][j]["contract_attributes"])
+                        curr["contract_attributes"] = JSON.json(current["product_items"][i]["tariff_items"][j]["contract_attributes"])
                         prev = previous["product_items"][i]["tariff_items"][j]["tariff_ref"]["rev"]
                         tirr = compareRevisions(TariffItemRevision, prev, curr)
                         if !isnothing(tirr)

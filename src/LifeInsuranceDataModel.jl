@@ -462,8 +462,9 @@ function persistModelStateContract(previous::Dict{String,Any}, current::Dict{Str
                 @info ("INSERT" * string(i))
                 let
                     component = rootcomponent
-                    subcomponent = get_typeof_component(curr)()
-                    create_subcomponent!(component, subcomponent, ToStruct.tostruct(ContractPartnerRefRevision, curr), w)
+                    curr_struct = ToStruct.tostruct(ContractPartnerRefRevision, curr)
+                    subcomponent = get_typeof_component(curr_struct)()
+                    create_subcomponent!(component, subcomponent, curr_struct, w)
                 end
             else
                 let

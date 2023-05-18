@@ -32,6 +32,7 @@ export persistModelStateContract,
     psection,
     ProductItem,
     ProductItemRevision,
+    ProductItemProductReference,
     TariffItemRole,
     TariffItem,
     TariffItemRevision,
@@ -111,6 +112,14 @@ is a section (see above) of a Product entity
 end
 
 """
+ProductItemProductReference is a reference from a ProductItem to a product entity
+"""
+@kwdef mutable struct ProductItemProductReference
+    rev::ProductItemRevision = ProductItemRevision()
+    ref::ProductSection = ProductSection()
+end
+
+"""
 TariffItemPartnerReference is a reference from a TariffItem to a Partner entity
 For instance, typically an insured person
 """
@@ -141,6 +150,7 @@ end
 ProductItemSection is a section (see above) of a ProductItem component
 """
 @kwdef mutable struct ProductItemSection
+    product_ref::ProductSection = ProductSection()
     revision::ProductItemRevision = ProductItemRevision()
     tariff_items::Vector{TariffItemSection} = []
 end
@@ -226,7 +236,8 @@ function pisection(history_id::Integer, version_id::Integer, tsdb_validfrom, tsw
                             end
                         end
 
-                        ProductItemSection(revision=pir, tariff_items=pitrs)
+                        prs = prsection(pir.ref_product.value, tsdb_validfrom, tsworld_validfrom, 0)
+                        ProductItemSection(revision=pir, tariff_items=pitrs, product_ref=prs)
                     end
                 end
             end,

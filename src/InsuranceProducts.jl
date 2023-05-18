@@ -34,6 +34,7 @@ Procuct_Revision
   ref_component::DbId = InfinityKey
   ref_validfrom::DbId = InfinityKey
   ref_invalidfrom::DbId = InfinityKey
+  interface_id::Integer = 0
   description::String = ""
 end
 

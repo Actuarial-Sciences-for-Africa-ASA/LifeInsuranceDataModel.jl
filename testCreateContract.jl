@@ -100,7 +100,7 @@ LifeInsuranceDataModel.load_model()
     # Create Product
 
     p = Product()
-    pr = ProductRevision(description="Life Risk")
+    pr = ProductRevision(interface_id=1, description="Life Risk")
 
     pp = ProductPart()
     ppr = ProductPartRevision(
@@ -130,7 +130,7 @@ LifeInsuranceDataModel.load_model()
     println(LifeRiskProduct)
 
     p = Product()
-    pr = ProductRevision(description="Two Life Risk")
+    pr = ProductRevision(interface_id=2, description="Two Life Risk")
 
     pp = ProductPart()
     ppr = ProductPartRevision(
@@ -161,7 +161,7 @@ LifeInsuranceDataModel.load_model()
 
 
     p = Product()
-    pr = ProductRevision(description="Life Risk - Terminal Illness")
+    pr = ProductRevision(interface_id=3, description="Life Risk - Terminal Illness")
 
     pp = ProductPart()
     ppr = ProductPartRevision(

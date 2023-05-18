@@ -34,4 +34,4 @@ ENV["SEARCHLIGHT_PASSWORD"] = "postgres"
 #
 #println(pwd())
 # ZonedDateTime(Date("2025-12-01"), tz"UTC")
-csection(2, now(tz"UTC"), MaxDate - Day(1), 0)
+csection(1, now(tz"UTC"), MaxDate - Day(1), 0)

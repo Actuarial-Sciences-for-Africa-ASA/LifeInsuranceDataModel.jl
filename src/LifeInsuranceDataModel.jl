@@ -57,6 +57,7 @@ export Product, ProductRevision, ProductPart, ProductPartRevision, ProductPartRo
     create_tariff
 export ContractSection, ProductItemSection, PartnerSection, TariffItemSection, TariffSection, csection, pisection, tsection, psection, load_model
 export ProductSection, ProductPartSection, prsection
+export testpolymorph
 
 """"
 PartnerSection
@@ -176,6 +177,9 @@ ContractSection
     revision::ContractRevision = ContractRevision()
     partner_refs::Vector{ContractPartnerReference} = []
     product_items::Vector{ProductItemSection} = []
+end
+
+function testpolymorph(::Val{T}) where {T<:Integer}
 end
 
 """

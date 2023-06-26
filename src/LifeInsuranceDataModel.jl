@@ -57,7 +57,7 @@ export Product, ProductRevision, ProductPart, ProductPartRevision, ProductPartRo
     create_tariff
 export ContractSection, ProductItemSection, PartnerSection, TariffItemSection, TariffSection, csection, pisection, tsection, psection, load_model
 export ProductSection, ProductPartSection, prsection
-export testpolymorph
+export get_tariff_interface
 
 """"
 PartnerSection
@@ -179,7 +179,11 @@ ContractSection
     product_items::Vector{ProductItemSection} = []
 end
 
-function testpolymorph(::Val{T}) where {T<:Integer}
+function get_tariff_interface(inteerface_id::Integer)
+    get_tariff_interface(Val(interface_id))
+end
+
+function get_tariff_interface(::Val{T}) where {T<:Integer}
 end
 
 """

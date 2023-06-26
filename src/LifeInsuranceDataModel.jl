@@ -179,7 +179,7 @@ ContractSection
     product_items::Vector{ProductItemSection} = []
 end
 
-function get_tariff_interface(inteerface_id::Integer)
+function get_tariff_interface(interface_id::Integer)
     get_tariff_interface(Val(interface_id))
 end
 

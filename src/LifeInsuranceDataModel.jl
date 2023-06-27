@@ -186,6 +186,11 @@ end
 function get_tariff_interface(::Val{T}) where {T<:Integer}
 end
 
+
+function get_tariff_interface(tis::TariffItemSection)
+    get_tariff_interface(tis.tariff_ref.ref.revision.interface_id)
+end
+
 """
 create_product_instance(wf::Workflow; pi::ProductItem, p::Integer, partnerrolemap::Dict{Integer,PartnerSection})
 

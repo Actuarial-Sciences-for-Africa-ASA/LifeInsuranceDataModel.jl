@@ -27,7 +27,7 @@ uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
 [[deps.BitemporalPostgres]]
 deps = ["AbstractTrees", "Dates", "Intervals", "Logging", "Pkg", "SearchLight", "SearchLightPostgreSQL", "Test", "TimeZones", "ToStruct", "YAML"]
-path = "/home/mf/dev/julia_depot/dev/BitemporalPostgres"
+git-tree-sha1 = "30ce0d2b153807e55e1f05f0543b48888d3a01b5"
 uuid = "e513cd14-23e6-48df-acf1-d9bc8fa5674b"
 version = "1.7.0"
 

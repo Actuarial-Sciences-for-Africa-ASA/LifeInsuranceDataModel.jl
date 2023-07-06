@@ -57,7 +57,7 @@ export Product, ProductRevision, ProductPart, ProductPartRevision, ProductPartRo
     create_tariff
 export ContractSection, ProductItemSection, PartnerSection, TariffItemSection, TariffSection, csection, pisection, tsection, psection, load_model
 export ProductSection, ProductPartSection, prsection
-export get_tariff_interface
+export ProductInterface, TariffInterface, get_product_interface, get_tariff_interface, validate
 
 """"
 PartnerSection
@@ -179,16 +179,62 @@ ContractSection
     product_items::Vector{ProductItemSection} = []
 end
 
-function get_tariff_interface(interface_id::Integer)
+"""
+mutable struct TariffInterface
+"""
+mutable struct TariffInterface
+    description::String
+    calls::Dict{String,Any}
+    calculator::Function
+    validator::Function
+    parameters::Dict{String,Any}
+    contract_attributes::Dict{String,Any}
+    partnerroles::Vector{Int}
+end
+
+
+function get_tariff_interface(interface_id::Integer)::TariffInterface
     get_tariff_interface(Val(interface_id))
 end
 
-function get_tariff_interface(::Val{T}) where {T<:Integer}
+function get_tariff_interface(::Val{T})::TariffInterface where {T<:Integer}
 end
 
 
-function get_tariff_interface(tis::TariffItemSection)
+function get_tariff_interface(tis::TariffItemSection)::TariffInterface
     get_tariff_interface(tis.tariff_ref.ref.revision.interface_id)
+end
+
+"""
+mutable struct ProductInterface
+"""
+
+mutable struct ProductInterface
+    description::String
+    calls::Dict{String,Any}
+    calculator::Function
+    validator::Function
+    parameters::Dict{String,Any}
+    contract_attributes::Dict{String,Any}
+    tariffs::Vector{TariffInterface}
+end
+
+function get_product_interface(interface_id::Integer)::ProductInterface
+    get_product_interface(Val(interface_id))
+end
+
+function get_product_interface(::Val{T})::ProductInterface where {T<:Integer}
+end
+
+function get_product_interface(pis::ProductItemSection)::ProductInterface
+    get_product_interface(pis.product_ref.revision.interface_id)
+end
+
+function validate(pis::ProductItemSection)
+    get_product_interface(pis).validator(pis)
+    map(pis.tariff_items) do tis
+        get_tariff_interface(tis).validator(tis)
+    end
 end
 
 """
@@ -198,7 +244,7 @@ create_product_instance(wf::Workflow; pi::ProductItem, p::Integer, partnerrolema
 	the product parts of a Product p referencing the respective tariffs
 	and Partner refp1 in role prole1
     expects a persisted productitem 
-    yields persisted tariff items
+    yields persisted tariff itemscalculate!
 """
 
 function create_product_instance(wf::Workflow, pi::ProductItem, p::Integer, partnerrolemap::Dict{Integer,PartnerSection})

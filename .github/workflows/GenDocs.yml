@@ -1,32 +1,42 @@
 name: Documentation
 # Run on master, tags, or any pull request
 on:
-  #  schedule:
-  #    - cron: '0 2 * * *'  # Daily at 2 AM UTC (8 PM CST)
+#  schedule:
+#    - cron: '0 2 * * *'  # Daily at 2 AM UTC (8 PM CST)
   push:
     branches: [main]
     tags: ["*"]
   pull_request:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning'
 concurrency:
   # Skip intermediate builds: always.
   # Cancel intermediate builds: only if it is a pull request build.
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
 jobs:
+
   docs:
     name: Documentation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v1
         with:
-          version: "1"
+          version: '1'
       - run: |
+          - run: |
+          echo "Log level: ${{ github.event.inputs.logLevel }}"
+          echo "Tags: ${{ github.event.inputs.tags }}" 
           git config --global user.name name
           git config --global user.email email
           git config --global github.user username
-      - working-directory: docs
-        run: julia --project=$(pwd) -e' push!(LOAD_PATH,"../src"); using Pkg;Pkg.instantiate(); include("make.jl")'
+      - working-directory: .
+        run: julia --project=. -e 'using Pkg; Pkg.add("Documenter"); Pkg.instantiate(); include("docs/make.jl")'
         env:
           JULIA_PKG_SERVER: ""
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

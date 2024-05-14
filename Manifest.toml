@@ -21,9 +21,9 @@ uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
 [[deps.BitemporalPostgres]]
 deps = ["AbstractTrees", "Dates", "Intervals", "Logging", "Pkg", "SearchLight", "SearchLightPostgreSQL", "Test", "TimeZones", "ToStruct", "YAML"]
-git-tree-sha1 = "3928554d7c968b0ada85898a43941e399cdcd871"
+git-tree-sha1 = "a2fb090381ee8304307d4fbce926d63dea8689f6"
 uuid = "e513cd14-23e6-48df-acf1-d9bc8fa5674b"
-version = "1.9.0"
+version = "1.9.2"
 
 [[deps.CEnum]]
 git-tree-sha1 = "eb4cb44a499229b3b8426dcfb5dd85333951ff90"

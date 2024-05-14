@@ -3,8 +3,8 @@ image:
 tasks:
   - init: >
       cd ~ && curl -L https://storage.googleapis.com/julialang2/bin/linux/x64/$JULIA_MINOR_VERSION/julia-$JULIA_BUGFIX_VERSION-linux-x86_64.tar.gz 
-      | tar -xzf -
-      && echo "PATH_add ~/julia-$JULIA_BUGFIX_VERSION/bin" > /workspace/.envrc 
+      | tar -xzf - && mv julia-$JULIA_BUGFIX_VERSION julia
+      && echo "PATH_add ~/julia/bin" > /workspace/.envrc 
       && echo 'export SEARCHLIGHT_USERNAME="gitpod"' >> /workspace/.envrc 
       && direnv allow /workspace
   - command: python3 -m http.server 8080 -d docs/build

@@ -7,6 +7,5 @@ tasks:
       && echo "PATH_add ~/julia-$JULIA_BUGFIX_VERSION/bin" > /workspace/.envrc 
       && echo 'export SEARCHLIGHT_USERNAME="gitpod"' >> /workspace/.envrc 
       && direnv allow /workspace
-  - command: julia -e 'include("init.jl")'
   - command: python3 -m http.server 8080 -d docs/build
   - command: julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate();include("testCreateContract.jl"); include("testPendingMutations.jl")'

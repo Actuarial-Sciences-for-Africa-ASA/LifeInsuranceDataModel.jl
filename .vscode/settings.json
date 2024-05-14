@@ -1,5 +1,5 @@
 {
-    "julia.executablePath": "$(JULIA_HOME)",
+    "julia.executablePath": "~/julia/bin",
     "sqltools.connections": [
         {
             "previewLimit": 50,

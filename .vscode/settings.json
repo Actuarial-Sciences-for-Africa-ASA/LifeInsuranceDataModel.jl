@@ -1,15 +1,43 @@
 {
-    "julia.executablePath": "~/julia/bin",
+    "workbench.iconTheme": "theia-file-icons",
+    "redhat.telemetry.enabled": true,
+    "git.autofetch": true,
+    "gitpod.openInStable.neverPrompt": true,
+    "nixEnvSelector.nixFile": "default.nix",
+    "workbench.startupEditor": "none",
+    "files.exclude": {
+        "**/.classpath": true,
+        "**/.project": true,
+        "**/.settings": true,
+        "**/.factorypath": true
+    },
+    "terminal.integrated.commandsToSkipShell": [
+        "language-julia.interrupt"
+    ],
+    "terminal.integrated.scrollback": 50000,
+    "julia.executablePath": "~/julia/bin/julia",
+    "julia.symbolCacheDownload": true,
+    "julia.enableTelemetry": true,
+    "settingsSync.ignoredExtensions": [
+        "vscode.julia"
+    ],
+    "vscode-postgres.defaultConnection": "postgres",
+    "vscode-postgres.defaultDatabase": "postgres",
+    "julia.enableCrashReporter": true,
+    "gitlens.advanced.messages": {
+        "suppressCommitHasNoPreviousCommitWarning": true
+    },
     "sqltools.connections": [
         {
             "previewLimit": 50,
             "server": "localhost",
             "port": 5432,
             "driver": "PostgreSQL",
-            "name": "postgres",
-            "database": "postgres",
             "username": "gitpod",
-            "password": ""
+            "name": "gitpod",
+            "database": "postgres"
         }
-    ]
+    ],
+    "julia.NumThreads": 0,
+    "workbench.editor.empty.hint": "hidden"
 }

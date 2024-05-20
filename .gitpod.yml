@@ -1,11 +1,15 @@
 image:
   file: .gitpod.Dockerfile
+
 tasks:
-  - init: >
-      cd ~ && curl -L https://storage.googleapis.com/julialang2/bin/linux/x64/$JULIA_MINOR_VERSION/julia-$JULIA_BUGFIX_VERSION-linux-x86_64.tar.gz 
-      | tar -xzf - && mv julia-$JULIA_BUGFIX_VERSION julia
-      && echo "PATH_add ~/julia/bin" > /workspace/.envrc 
-      && echo 'export SEARCHLIGHT_USERNAME="gitpod"' >> /workspace/.envrc 
-      && direnv allow /workspace
+  - name: Script Task
+    init: >
+      echo 'init script' 
+      && echo 'export SEARCHLIGHT_USERNAME="gitpod"' > $GITPOD_REPO_ROOT/.envrc 
+      && direnv allow $GITPOD_REPO_ROOT
   - command: python3 -m http.server 8080 -d docs/build
   - command: julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate();include("testCreateContract.jl"); include("testPendingMutations.jl")'
+
+  # - command: python3 -m http.server 8080 -d docs/build
+  - command: gp open test.ipynb
+

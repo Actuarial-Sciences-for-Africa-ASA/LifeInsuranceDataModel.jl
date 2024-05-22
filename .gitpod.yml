@@ -1,4 +1,4 @@
-image: michaelfliegner:gitpodpgijulia
+image: michaelfliegner/gitpodpgijulia
 
 tasks:
   - name: Script Task

@@ -13,12 +13,6 @@ using TimeZones
 using ToStruct
 using JSON
 # purging the data model entirely - empty the schema
-
-# if (haskey(ENV, "GITPOD_REPO_ROOT"))
-#     run(```psql -f sqlsnippets/droptables.sql```)
-# elseif (haskey(ENV, "GENIE_ENV") & (ENV["GENIE_ENV"] == "dev"))
-#     run(```psql -d postgres -f sqlsnippets/droptables.sql```)
-# end
 LifeInsuranceDataModel.connect()
 SearchLight.query("DROP SCHEMA public CASCADE")
 SearchLight.query("CREATE SCHEMA public")

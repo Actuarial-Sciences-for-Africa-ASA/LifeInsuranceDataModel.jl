@@ -1,6 +1,6 @@
 using LifeInsuranceDataModel, TimeZones
-ENV["SEARCHLIGHT_USERNAME"] = "mf"
-ENV["SEARCHLIGHT_PASSWORD"] = "mf"
+ENV["SEARCHLIGHT_USERNAME"] = "postgres"
+ENV["SEARCHLIGHT_PASSWO|RD"] = "postgres"
 #csection(1, now(tz"UTC"), ZonedDateTime(2022, 11, 01, 12, 0, 1, 1, tz"UTC"))
 LifeInsuranceDataModel.connect()
 

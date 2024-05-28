@@ -24,8 +24,6 @@ end
 #     Dict("version" => string(i["ref_version"]), "interval" => i, "children" => shdw, "label" => "committed " * string(i["tsdb_validfrom"]) * " valid as of " * string(Date(i["tsworld_validfrom"], UTC)))
 # end
 
-ENV["SEARCHLIGHT_USERNAME"] = ENV["USER"]
-ENV["SEARCHLIGHT_PASSWORD"] = ENV["USER"]
 #histo = map(convert, LifeInsuranceDataModel.history_forest(11).shadowed)
 #
 #res = fn(histo, "11")

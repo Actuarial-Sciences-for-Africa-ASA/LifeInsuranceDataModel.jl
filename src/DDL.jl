@@ -160,6 +160,7 @@ function up()
             column(:ref_validfrom, :bigint, "REFERENCES versions(id) ON DELETE CASCADE")
             column(:ref_invalidfrom, :bigint, "DEFAULT 2^53 - 1 REFERENCES versions(id) ON DELETE SET DEFAULT")
             column(:ref_valid, :int8range)
+            column(:interface_id, :bigint, not_null=true)
             column(:description, :string)
         ]
     end

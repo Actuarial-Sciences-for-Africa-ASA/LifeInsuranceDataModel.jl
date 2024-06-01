@@ -1,9 +1,13 @@
+image: michaelfliegner/gitpodpgijulia
 
-image:
-  file: .gitpod.Dockerfile
 tasks:
-  - init: echo 'PATH_add ~/julia-1.8.0/bin' > /workspace/.envrc  \
-      && echo 'export SEARCHLIGHT_USERNAME="gitpod"' >> /workspace/.envrc 
+  - name: Script Task
+    init: >
+      echo 'init script' 
+      && echo 'export SEARCHLIGHT_USERNAME="gitpod"' > /workspace/.envrc 
+      && direnv allow /workspace
   - command: python3 -m http.server 8080 -d docs/build
-  - command: gp preview $(gp url 8080)
-  - command: julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate();include("testsCreateContract.jl"); include("testPendingMutations.jl")'
+  - command: julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate();include("testCreateContract.jl"); include("testPendingMutations.jl")'
+
+  - command: gp open test.ipynb
+

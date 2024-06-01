@@ -1,7 +1,5 @@
 push!(LOAD_PATH, "src")
 using BitemporalPostgres, JSON, LifeInsuranceDataModel, SearchLight, Test, TimeZones, ToStruct
-ENV["SEARCHLIGHT_USERNAME"] = "postgres"
-ENV["SEARCHLIGHT_PASSWORD"] = "postgres"
 
 LifeInsuranceDataModel.connect()
 

@@ -18,7 +18,6 @@ Examples:
 - Add DDL for your entity or component in functions up and down of package DDL.jl 
   - create tables for your structs and
   - and create constraints and triggers using the function ``createRevisionsTriggerAndConstraint(trigger::Symbol,constraint::Symbol,table::Symbol,)``
-- Add your tables to sqlsnippets/droptables.sql preserving the reverse order of dependencies (no dependencies first)
 
 end
 

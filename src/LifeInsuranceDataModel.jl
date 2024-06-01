@@ -32,6 +32,7 @@ export persistModelStateContract,
     psection,
     ProductItem,
     ProductItemRevision,
+    ProductItemProductReference,
     TariffItemRole,
     TariffItem,
     TariffItemRevision,
@@ -56,6 +57,7 @@ export Product, ProductRevision, ProductPart, ProductPartRevision, ProductPartRo
     create_tariff
 export ContractSection, ProductItemSection, PartnerSection, TariffItemSection, TariffSection, csection, pisection, tsection, psection, load_model
 export ProductSection, ProductPartSection, prsection
+export ProductInterface, TariffInterface, get_product_interface, get_tariff_interface, validate
 
 """"
 PartnerSection
@@ -111,6 +113,14 @@ is a section (see above) of a Product entity
 end
 
 """
+ProductItemProductReference is a reference from a ProductItem to a product entity
+"""
+@kwdef mutable struct ProductItemProductReference
+    rev::ProductItemRevision = ProductItemRevision()
+    ref::ProductSection = ProductSection()
+end
+
+"""
 TariffItemPartnerReference is a reference from a TariffItem to a Partner entity
 For instance, typically an insured person
 """
@@ -141,6 +151,7 @@ end
 ProductItemSection is a section (see above) of a ProductItem component
 """
 @kwdef mutable struct ProductItemSection
+    product_ref::ProductSection = ProductSection()
     revision::ProductItemRevision = ProductItemRevision()
     tariff_items::Vector{TariffItemSection} = []
 end
@@ -169,13 +180,71 @@ ContractSection
 end
 
 """
+mutable struct TariffInterface
+"""
+mutable struct TariffInterface
+    description::String
+    calls::Dict{String,Any}
+    calculator::Function
+    validator::Function
+    parameters::Dict{String,Any}
+    contract_attributes::Dict{String,Any}
+    partnerroles::Vector{Int}
+end
+
+
+function get_tariff_interface(interface_id::Integer)::TariffInterface
+    get_tariff_interface(Val(interface_id))
+end
+
+function get_tariff_interface(::Val{T})::TariffInterface where {T<:Integer}
+end
+
+
+function get_tariff_interface(tis::TariffItemSection)::TariffInterface
+    get_tariff_interface(tis.tariff_ref.ref.revision.interface_id)
+end
+
+"""
+mutable struct ProductInterface
+"""
+
+mutable struct ProductInterface
+    description::String
+    calls::Dict{String,Any}
+    calculator::Function
+    validator::Function
+    parameters::Dict{String,Any}
+    contract_attributes::Dict{String,Any}
+    tariffs::Vector{TariffInterface}
+end
+
+function get_product_interface(interface_id::Integer)::ProductInterface
+    get_product_interface(Val(interface_id))
+end
+
+function get_product_interface(::Val{T})::ProductInterface where {T<:Integer}
+end
+
+function get_product_interface(pis::ProductItemSection)::ProductInterface
+    get_product_interface(pis.product_ref.revision.interface_id)
+end
+
+function validate(pis::ProductItemSection)
+    get_product_interface(pis).validator(pis)
+    map(pis.tariff_items) do tis
+        get_tariff_interface(tis).validator(tis)
+    end
+end
+
+"""
 create_product_instance(wf::Workflow; pi::ProductItem, p::Integer, partnerrolemap::Dict{Integer,PartnerSection})
 
 	creates tariff items of a productitem pi corresponding to
 	the product parts of a Product p referencing the respective tariffs
 	and Partner refp1 in role prole1
     expects a persisted productitem 
-    yields persisted tariff items
+    yields persisted tariff itemscalculate!
 """
 
 function create_product_instance(wf::Workflow, pi::ProductItem, p::Integer, partnerrolemap::Dict{Integer,PartnerSection})
@@ -226,7 +295,8 @@ function pisection(history_id::Integer, version_id::Integer, tsdb_validfrom, tsw
                             end
                         end
 
-                        ProductItemSection(revision=pir, tariff_items=pitrs)
+                        prs = prsection(pir.ref_product.value, tsdb_validfrom, tsworld_validfrom, 0)
+                        ProductItemSection(revision=pir, tariff_items=pitrs, product_ref=prs)
                     end
                 end
             end,
@@ -409,9 +479,9 @@ function instantiate_product(prs::ProductSection, partnerrolemap::Dict{Integer,P
         let tiprs = map(pt.ref.partner_roles) do r
                 TariffItemPartnerReference(rev=TariffItemPartnerRefRevision(ref_role=r.ref_role.value, ref_partner=partnerrolemap[r.ref_role.value].revision.id))
             end
-            tir = TariffItemRevision(ref_role=pt.revision.ref_role, ref_tariff=pt.revision.ref_tariff, parameters=pt.ref.revision.parameters)
+            tir = TariffItemRevision(ref_role=pt.revision.ref_role, ref_tariff=pt.revision.ref_tariff, contract_attributes=pt.ref.revision.contract_attributes)
             titr = TariffItemTariffReference(ref=pt.ref, rev=tir)
-            ca = JSON.parse(tir.parameters)
+            ca = JSON.parse(tir.contract_attributes)
             TariffItemSection(tariff_ref=titr, partner_refs=tiprs, contract_attributes=ca)
         end
     end
@@ -462,8 +532,9 @@ function persistModelStateContract(previous::Dict{String,Any}, current::Dict{Str
                 @info ("INSERT" * string(i))
                 let
                     component = rootcomponent
-                    subcomponent = get_typeof_component(curr)()
-                    create_subcomponent!(component, subcomponent, ToStruct.tostruct(ContractPartnerRefRevision, curr), w)
+                    curr_struct = ToStruct.tostruct(ContractPartnerRefRevision, curr)
+                    subcomponent = get_typeof_component(curr_struct)()
+                    create_subcomponent!(component, subcomponent, curr_struct, w)
                 end
             else
                 let
@@ -500,7 +571,7 @@ function persistModelStateContract(previous::Dict{String,Any}, current::Dict{Str
                     for j in 1:length(current["product_items"][i]["tariff_items"])
                         let
                             curr = current["product_items"][i]["tariff_items"][j]["tariff_ref"]["rev"]
-                            curr["parameters"] = JSON.json(current["product_items"][i]["tariff_items"][j]["contract_attributes"])
+                            curr["contract_attributes"] = JSON.json(current["product_items"][i]["tariff_items"][j]["contract_attributes"])
                             ticomponent = pisubcomponent
                             tisubcomponent = get_typeof_component(ToStruct.tostruct(TariffItemRevision, curr))()
                             @info ("INSERT/DELETE tariff item " * string(i) * "/" * string(j) * "c=" * string(ticomponent.id.value))
@@ -531,7 +602,7 @@ function persistModelStateContract(previous::Dict{String,Any}, current::Dict{Str
                 for j in 1:length(current["product_items"][i]["tariff_items"])
                     let
                         curr = current["product_items"][i]["tariff_items"][j]["tariff_ref"]["rev"]
-                        curr["parameters"] = JSON.json(current["product_items"][i]["tariff_items"][j]["contract_attributes"])
+                        curr["contract_attributes"] = JSON.json(current["product_items"][i]["tariff_items"][j]["contract_attributes"])
                         prev = previous["product_items"][i]["tariff_items"][j]["tariff_ref"]["rev"]
                         tirr = compareRevisions(TariffItemRevision, prev, curr)
                         if !isnothing(tirr)

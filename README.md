@@ -57,3 +57,18 @@ When You open this project in a [gitpod container](https://gitpod.io/workspaces)
     - tariff items refrence tariffs corresponding to the product's parts
       - tariff item partners reference partners in roles corresponding to the referenced tariff's partner roles
 
+## Next Steps
+
+Click the button below to start a new development environment:
+
+The gitpod workspace uses a Docker a public image: [michaelfliegner/gitpodpgijulia](https://hub.docker.com/repository/docker/michaelfliegner/gitpodpgijulia/general)
+
+[The Dockerfile for this image resides here](https://github.com/Actuarial-Sciences-for-Africa-ASA/gitpod-pg-ijulia-Dockerfile)
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/?autostart=true#https://github.com/Actuarial-Sciences-for-Africa-ASA/LifeInsuranceDataModel.jl) [On startup vscode will open this jupyter notebook:](test.ipynb)
+
+## Get Started With Your Own Project
+
+### A new project
+
+Click the above "Open in Gitpod" button to start a new workspace. Once you're ready to push your first code changes, Gitpod will guide you to fork this project so you own it.

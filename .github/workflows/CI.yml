@@ -33,6 +33,6 @@ jobs:
       - name: "Set up Julia"
         uses: julia-actions/setup-julia@v1
         with:
-          version: "1.8.2"
+          version: ${{ vars.JULIA_MINOR_VERSION }}
       - run: export SEARCHLIGHT_USERNAME="postgres"; export SEARCHLIGHT_PASSWORD="postgres"; GENIE_ENV="test" julia --project=$(pwd) -e'push!(LOAD_PATH,"src"); using Pkg; Pkg.instantiate();include("test/runtests.jl")'
         shell: bash

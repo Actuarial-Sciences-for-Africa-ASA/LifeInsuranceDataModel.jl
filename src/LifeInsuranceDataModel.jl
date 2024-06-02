@@ -200,9 +200,12 @@ end
 function get_tariff_interface(::Val{T})::TariffInterface where {T<:Integer}
 end
 
-
 function get_tariff_interface(tis::TariffItemSection)::TariffInterface
     get_tariff_interface(tis.tariff_ref.ref.revision.interface_id)
+end
+
+function LifeInsuranceDataModel.get_tariff_interface(::Val{0})
+    TariffInterface("Dummy", Dict{String, Any}(), identity, identity, Dict{String, Any}(), Dict{String, Any}(), Int64[])
 end
 
 """

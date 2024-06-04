@@ -1,0 +1,16 @@
+{
+	"image": "mcr.microsoft.com/devcontainers/universal:2",
+	"features": {
+		"ghcr.io/devcontainers-contrib/features/postgres-asdf:1": {
+			"version": "latest"
+		},
+		"ghcr.io/julialang/devcontainer-features/julia:1": {
+			"channel": "release"
+		},
+		"ghcr.io/robbert229/devcontainer-features/postgresql-client:1": {
+			"version": "13"
+		}
+	},
+   "postCreateCommand": "/bin/sh -c ./.devcontainer/postCreateCommand.sh",
+   "postAttachCommand": "/bin/sh -c ./.devcontainer/postAttachCommand.sh"
+}

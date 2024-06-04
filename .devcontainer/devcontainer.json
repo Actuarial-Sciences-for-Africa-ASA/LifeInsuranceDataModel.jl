@@ -12,5 +12,5 @@
 		}
 	},
    "postCreateCommand": "/bin/sh -c ./.devcontainer/postCreateCommand.sh",
-   "postStartCommand": "/bin/sh -c ./.devcontainer/postStartCommand.sh"
+   "postAttachCommand": "/bin/sh -c ./.devcontainer/postAttachCommand.sh"
 }
